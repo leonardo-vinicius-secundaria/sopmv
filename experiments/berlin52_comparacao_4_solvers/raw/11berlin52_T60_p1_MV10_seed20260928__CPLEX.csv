@@ -1,0 +1,2 @@
+instance,variant,mandatory_ratio,mandatory_sets,status,solver_status,objective,best_bound,gap,elapsed_seconds,tree_nodes,total_distance,tmax,route,visited_nodes,served_sets,mandatory_satisfied,solution_valid,validation_message
+"11berlin52_T60_p1_MV10_seed20260928",SOPMV,0.0909090909090909,"11",FeasibleTimeLimit,"Feasible (CPLEX code 11)",41,49.2719995386976,0.201756086309206,10.0135879516602,510,2420,2424,"1;31;21;19;45;32;28;46;1","1;19;21;28;31;32;45;46","3;4;7;9;10;11",true,true,"solucao valida"

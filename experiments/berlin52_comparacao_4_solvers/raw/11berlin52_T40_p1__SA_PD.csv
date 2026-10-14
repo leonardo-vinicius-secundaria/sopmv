@@ -1,0 +1,2 @@
+instance,variant,mandatory_ratio,mandatory_sets,status,solver_status,objective,best_bound,gap,elapsed_seconds,tree_nodes,total_distance,tmax,route,visited_nodes,served_sets,mandatory_satisfied,solution_valid,validation_message
+"11berlin52_T40_p1",SOP,0,"",Feasible,"SA_PD",37,,,3.000001346,778611,986,1616,"1;23;31;19;45;32;1","1;19;23;31;32;45","3;4;7;9;10",true,true,"solucao valida"

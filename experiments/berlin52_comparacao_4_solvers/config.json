@@ -1,0 +1,8 @@
+{
+  "descricao": "Comparação histórica dos quatro resolvedores na família berlin52",
+  "resolvedores": ["CPLEX", "SA_PD", "GREEDY", "ILS"],
+  "seed_geracao": 20260928,
+  "percentuais_obrigatorios": [0, 10, 20, 30],
+  "entradas": "inputs/",
+  "resultados_individuais": ["raw/", "raw_ils/"]
+}

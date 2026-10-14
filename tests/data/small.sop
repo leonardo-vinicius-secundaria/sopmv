@@ -1,0 +1,16 @@
+NAME: small_known
+TYPE: TSP
+COMMENT: Synthetic SOP instance for exact tests
+DIMENSION: 3
+TMAX: 4
+SETS: 3
+EDGE_WEIGHT_TYPE: CEIL_2D
+NODE_COORD_SECTION
+1 0 0
+2 1 0
+3 0 2
+GTSP_SET_SECTION: set_id set_profit id-vertex-list
+0 0 1
+1 5 2
+2 8 3
+EOF

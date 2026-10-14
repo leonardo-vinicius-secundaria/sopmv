@@ -1,0 +1,7 @@
+{
+  "descricao": "Bateria completa dos quatro resolvedores na família berlin52",
+  "familias": ["SOP", "SOPMV10", "SOPMV20", "SOPMV30"],
+  "resolvedores": ["CPLEX", "ILS", "GREEDY", "SA_PD"],
+  "seed": 202601,
+  "observacao": "Parâmetros detalhados permanecem registrados nas colunas do CSV."
+}

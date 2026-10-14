@@ -1,0 +1,162 @@
+#include "ils.hpp"
+#include "instance.hpp"
+#include "solution_validator.hpp"
+
+#include <cmath>
+#include <cstdlib>
+#include <filesystem>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <set>
+#include <sstream>
+#include <stdexcept>
+#include <string>
+
+namespace {
+
+struct CliOptions {
+    std::string instance_path;
+    std::string mandatory_path;
+    std::string mandatory_sets;
+    std::string csv_path{"results.csv"};
+    sopmv::ILSOptions ils;
+};
+
+void usage(const char* program) {
+    std::cerr << "Uso: " << program << " --instance ARQUIVO [opcoes]\n"
+              << "  --mandatory-file ARQUIVO.mv\n"
+              << "  --mandatory-sets \"ID ID ...\"\n"
+              << "  --ils-iterations N       (padrao: 10000)\n"
+              << "  --ils-perturbation N     (padrao: 2)\n"
+              << "  --ils-time-limit SEGUNDOS (padrao: 10)\n"
+              << "  --seed N                 (padrao: 202601)\n"
+              << "  --csv ARQUIVO            (padrao: results.csv)\n";
+}
+
+CliOptions parseOptions(int argc, char** argv) {
+    CliOptions options;
+    for (int i = 1; i < argc; ++i) {
+        const std::string arg = argv[i];
+        if (arg == "--help" || arg == "-h") { usage(argv[0]); std::exit(0); }
+        if (i + 1 >= argc) throw std::invalid_argument("valor ausente para " + arg);
+        const std::string value = argv[++i];
+        if (arg == "--instance") options.instance_path = value;
+        else if (arg == "--mandatory-file") options.mandatory_path = value;
+        else if (arg == "--mandatory-sets") options.mandatory_sets = value;
+        else if (arg == "--ils-iterations") options.ils.max_iterations = std::stoi(value);
+        else if (arg == "--ils-perturbation") options.ils.perturbation_strength = std::stoi(value);
+        else if (arg == "--ils-time-limit") options.ils.time_limit_seconds = std::stod(value);
+        else if (arg == "--seed") options.ils.seed = static_cast<std::uint32_t>(std::stoul(value));
+        else if (arg == "--csv") options.csv_path = value;
+        else throw std::invalid_argument("opcao desconhecida: " + arg);
+    }
+    if (options.instance_path.empty()) throw std::invalid_argument("--instance e obrigatorio");
+    if (!options.mandatory_path.empty() && !options.mandatory_sets.empty())
+        throw std::invalid_argument("use --mandatory-file ou --mandatory-sets, nao ambos");
+    if (options.ils.max_iterations < 0 || options.ils.perturbation_strength <= 0 ||
+        options.ils.time_limit_seconds < 0.0)
+        throw std::invalid_argument("parametros do ILS devem ser nao negativos (perturbacao > 0)");
+    return options;
+}
+
+std::set<int> parseSets(std::string text) {
+    for (char& c : text) if (c == ',') c = ' ';
+    std::istringstream input(text);
+    std::set<int> result;
+    for (int id; input >> id;) result.insert(id);
+    if (input.fail() && !input.eof()) throw std::invalid_argument("lista de conjuntos invalida");
+    return result;
+}
+
+template <typename Range>
+std::string join(const Range& values, const std::string& separator, int excluded = -1) {
+    std::ostringstream output;
+    bool first = true;
+    for (const auto& value : values) {
+        if (value == excluded) continue;
+        if (!first) output << separator;
+        output << value;
+        first = false;
+    }
+    return output.str();
+}
+
+std::string csvEscape(const std::string& value) {
+    std::string result{"\""};
+    for (char c : value) { if (c == '\"') result += '\"'; result += c; }
+    return result + '\"';
+}
+
+std::string numberOrEmpty(double value) {
+    if (!std::isfinite(value)) return {};
+    std::ostringstream output;
+    output << std::setprecision(15) << value;
+    return output.str();
+}
+
+void appendCsv(const std::string& path, const sopmv::Instance& instance,
+               const sopmv::Solution& solution) {
+    std::ifstream current(path, std::ios::binary | std::ios::ate);
+    const bool header = !current || current.tellg() == 0;
+    std::ofstream output(path, std::ios::app);
+    if (!output) throw std::runtime_error("nao foi possivel abrir CSV: " + path);
+    if (header) output << "instance,variant,mandatory_ratio,mandatory_sets,status,solver_status,objective,"
+                         "best_bound,gap,elapsed_seconds,tree_nodes,total_distance,tmax,route,visited_nodes,"
+                         "served_sets,mandatory_satisfied,solution_valid,validation_message\n";
+    const std::size_t eligible = instance.clusters.size() - 1;
+    const double ratio = eligible ? static_cast<double>(instance.mandatory_cluster_ids.size()) / eligible : 0.0;
+    output << csvEscape(instance.name) << ','
+           << (instance.mandatory_cluster_ids.empty() ? "SOP" : "SOPMV") << ','
+           << std::setprecision(15) << ratio << ',' << csvEscape(join(instance.mandatory_cluster_ids, ";")) << ','
+           << (solution.has_incumbent ? sopmv::statusName(solution.status) : "NoFeasibleSolutionFound") << ','
+           << csvEscape(solution.solver_status) << ',' << numberOrEmpty(solution.objective) << ",,,"
+           << solution.elapsed_seconds << ',' << solution.explored_nodes << ','
+           << numberOrEmpty(solution.total_distance) << ',' << instance.tmax << ','
+           << csvEscape(join(solution.route, ";")) << ',' << csvEscape(join(solution.visited_nodes, ";")) << ','
+           << csvEscape(join(solution.served_clusters, ";", instance.depot_cluster_id)) << ','
+           << (solution.mandatory_satisfied ? "true" : "false") << ','
+           << (solution.valid ? "true" : "false") << ',' << csvEscape(solution.validation_message) << '\n';
+}
+
+}  // namespace
+
+int main(int argc, char** argv) {
+    try {
+        const CliOptions options = parseOptions(argc, argv);
+        sopmv::Instance instance = sopmv::readInstance(options.instance_path);
+        if (!options.mandatory_path.empty()) {
+            auto mandatory = instance.mandatory_cluster_ids;
+            const auto extra = sopmv::readMandatoryFile(options.mandatory_path, instance);
+            mandatory.insert(extra.begin(), extra.end());
+            sopmv::applyMandatorySets(instance, mandatory);
+            instance.name = std::filesystem::path(options.mandatory_path).stem().string();
+        } else if (!options.mandatory_sets.empty()) {
+            sopmv::applyMandatorySets(instance, parseSets(options.mandatory_sets));
+        }
+        sopmv::Solution solution = sopmv::solveILS(instance, options.ils);
+        if (solution.has_incumbent) {
+            const auto validation = sopmv::validateSolution(instance, solution);
+            solution.valid = validation.valid;
+            solution.validation_message = validation.message;
+            if (validation.valid) {
+                solution.total_distance = validation.distance;
+                solution.objective = validation.objective;
+            }
+        }
+        appendCsv(options.csv_path, instance, solution);
+        std::cout << std::fixed << std::setprecision(6)
+                  << "Instancia: " << instance.name << "\nMetodo: ILS\nStatus: "
+                  << (solution.has_incumbent ? sopmv::statusName(solution.status) : "NoFeasibleSolutionFound")
+                  << "\nObjetivo: " << numberOrEmpty(solution.objective)
+                  << "\nDistancia: " << numberOrEmpty(solution.total_distance)
+                  << "\nTempo: " << solution.elapsed_seconds << " s\n"
+                  << "Rota: " << join(solution.route, " -> ") << "\n"
+                  << "Validador: " << (solution.valid ? "valido" : "nao aplicavel/invalido")
+                  << " (" << solution.validation_message << ")\n";
+        return solution.has_incumbent && !solution.valid ? 3 : 0;
+    } catch (const std::exception& error) {
+        std::cerr << "Erro: " << error.what() << '\n';
+        return 2;
+    }
+}

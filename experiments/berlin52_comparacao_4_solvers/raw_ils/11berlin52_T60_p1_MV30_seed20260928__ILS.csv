@@ -1,0 +1,2 @@
+instance,variant,mandatory_ratio,mandatory_sets,status,solver_status,objective,best_bound,gap,elapsed_seconds,tree_nodes,total_distance,tmax,route,visited_nodes,served_sets,mandatory_satisfied,solution_valid,validation_message
+"11berlin52_T60_p1_MV30_seed20260928",SOPMV,0.272727272727273,"1;8;11",Feasible,"ILS iterations=283398",29,,,3.000008668,120416166,2314,2424,"1;24;51;13;26;1","1;13;24;26;51","1;4;8;11",true,true,"solucao valida"

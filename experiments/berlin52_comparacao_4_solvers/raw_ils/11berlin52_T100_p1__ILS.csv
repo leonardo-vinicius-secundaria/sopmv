@@ -1,0 +1,2 @@
+instance,variant,mandatory_ratio,mandatory_sets,status,solver_status,objective,best_bound,gap,elapsed_seconds,tree_nodes,total_distance,tmax,route,visited_nodes,served_sets,mandatory_satisfied,solution_valid,validation_message
+"11berlin52_T100_p1",SOP,0,"",Feasible,"ILS iterations=180591",50,,,3.000006494,98905103,3764,4040,"1;32;45;19;51;27;13;47;29;42;31;1","1;13;19;27;29;31;32;42;45;47;51","1;2;3;4;6;7;8;9;10;11",true,true,"solucao valida"

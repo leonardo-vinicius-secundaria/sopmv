@@ -1,0 +1,326 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R 8 0 R] /Count 3 >>
+endobj
+3 0 obj
+<< /Length 4134 >>
+stream
+BT
+/F1 10 Tf
+50 770 Td
+13 TL
+(ROTEIRO DE AUDIO: HEURISTICA CONSTRUTIVA E ITERATED LOCAL SEARCH) Tj
+0 -13 Td
+(Roteiro baseado nos arquivos src/greedy e src/ils do projeto TCC SOPMV.) Tj
+0 -13 Td
+(Duração estimada: quinze a dezoito minutos.) Tj
+0 -13 Td
+(ORIENTACAO DE NARRACAO) Tj
+0 -13 Td
+(Este texto foi escrito para ser lido em voz alta. Símbolos de programação devem ser) Tj
+0 -13 Td
+(pronunciados por extenso. Por exemplo, não ler exclamação, dois pontos ou ponto e vírgula) Tj
+0 -13 Td
+(quando eles aparecem apenas como parte do código. Os nomes de funções são nomes técnicos:) Tj
+0 -13 Td
+(solve Greedy, solve ILS, best Insertion, local Search, perturb e improve Two Opt.) Tj
+0 -13 Td
+(BLOCO 1. CONTEXTUALIZACAO E FLUXO GERAL. TEMPO: ZERO A UM MINUTO.) Tj
+0 -13 Td
+(Olá. Neste episódio, vou explicar a implementação da heurística construtiva gulosa e do) Tj
+0 -13 Td
+(algoritmo Iterated Local Search, conhecido como ILS, desenvolvido para o problema de) Tj
+0 -13 Td
+(seleção de conjuntos com roteamento.) Tj
+0 -13 Td
+(A ideia geral é construir uma rota que parte do depósito, visita representantes de) Tj
+0 -13 Td
+(determinados clusters e retorna ao depósito. Cada cluster possui uma recompensa, cada nó) Tj
+0 -13 Td
+(possui uma posição na rede e existe uma restrição de distância máxima, representada por) Tj
+0 -13 Td
+(tmax.) Tj
+0 -13 Td
+(O objetivo é maximizar a recompensa, respeitando a distância máxima. Quando duas soluções) Tj
+0 -13 Td
+(têm a mesma recompensa, o algoritmo prefere a que possui menor distância.) Tj
+0 -13 Td
+(A heurística gulosa está em src barra greedy. O ILS está em src barra ils. O main do greedy) Tj
+0 -13 Td
+(e o main do ILS são programas separados. O main do ILS chama solve ILS, e solve ILS) Tj
+0 -13 Td
+(reutiliza solve Greedy, que está em greedy ponto cpp.) Tj
+0 -13 Td
+(O fluxo é: leitura da instância; aplicação dos conjuntos obrigatórios; construção gulosa;) Tj
+0 -13 Td
+(perturbação; busca local; comparação com a melhor solução; e repetição até atingir o limite) Tj
+0 -13 Td
+(de iterações ou de tempo.) Tj
+0 -13 Td
+(BLOCO 2. ESTRUTURAS DE CONFIGURACAO. TEMPO: UM A DOIS MINUTOS.) Tj
+0 -13 Td
+(No arquivo ils ponto hpp existe a estrutura ILS Options. Ela contém o número máximo de) Tj
+0 -13 Td
+(iterações, a força da perturbação, o limite de tempo em segundos e a semente do gerador) Tj
+0 -13 Td
+(aleatório.) Tj
+0 -13 Td
+(A função pública é solve ILS, que recebe uma instância e as opções e devolve uma solução.) Tj
+0 -13 Td
+(A estrutura Instance, definida em instance ponto hpp, guarda clusters, nós, distâncias,) Tj
+0 -13 Td
+(depósito, conjuntos obrigatórios e o limite tmax. A estrutura Solution, definida em) Tj
+0 -13 Td
+(solution ponto hpp, guarda a resposta final: sequência de clusters, representantes, rota,) Tj
+0 -13 Td
+(recompensa, distância, status e informações de validação.) Tj
+0 -13 Td
+(Internamente, o ILS utiliza a estrutura State. Ela contém sequence, representatives,) Tj
+0 -13 Td
+(distance e reward. Sequence é a ordem dos clusters. Representatives é o nó escolhido para) Tj
+0 -13 Td
+(representar cada cluster. Distance é a distância da rota e reward é a recompensa total.) Tj
+0 -13 Td
+(Durante a execução, o ILS mantém dois estados. Current é a solução usada na próxima) Tj
+0 -13 Td
+(iteração. Best é a melhor solução encontrada desde o início.) Tj
+0 -13 Td
+(BLOCO 3. CONSTRUCAO INICIAL. TEMPO: DOIS A CINCO MINUTOS.) Tj
+0 -13 Td
+(A construção começa em solve Greedy. A rota inicial contém apenas o depósito no início e no) Tj
+0 -13 Td
+(fim. Os vetores sequence e representatives começam vazios.) Tj
+0 -13 Td
+(Os clusters são divididos em dois conjuntos: remaining mandatory, que contém os) Tj
+0 -13 Td
+(obrigatórios, e remaining optional, que contém os opcionais, excluindo o depósito.) Tj
+0 -13 Td
+(A construção possui duas fases. Primeiro atende os obrigatórios. Depois tenta inserir os) Tj
+0 -13 Td
+(opcionais.) Tj
+0 -13 Td
+(Cada possibilidade de inserção é representada pela estrutura Candidate. Ela guarda o) Tj
+0 -13 Td
+(identificador do cluster, o identificador do nó, a posição de inserção, o acréscimo de) Tj
+0 -13 Td
+(distância e a recompensa.) Tj
+0 -13 Td
+ET
+endstream
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 9 0 R >> >> /Contents 4 0 R >>
+endobj
+5 0 obj
+<< /Length 4140 >>
+stream
+BT
+/F1 10 Tf
+50 770 Td
+13 TL
+(Para inserir um nó X entre os nós A e B, o código calcula o acréscimo como: distância de A) Tj
+0 -13 Td
+(até X, mais distância de X até B, menos distância de A até B. Somente as duas arestas) Tj
+0 -13 Td
+(afetadas são analisadas.) Tj
+0 -13 Td
+(BLOCO 4. INSERCAO DOS OBRIGATORIOS. TEMPO: CINCO A SETE MINUTOS.) Tj
+0 -13 Td
+(Enquanto existirem clusters obrigatórios, best Insertion percorre cada cluster elegível,) Tj
+0 -13 Td
+(cada nó do cluster e cada posição possível da rota.) Tj
+0 -13 Td
+(Se a nova distância ultrapassar tmax, o candidato é descartado. Na fase obrigatória, better) Tj
+0 -13 Td
+(Mandatory escolhe o candidato com menor acréscimo de distância. Empates são resolvidos pelo) Tj
+0 -13 Td
+(identificador do cluster, pelo identificador do nó e pela posição.) Tj
+0 -13 Td
+(Depois de escolher o candidato, apply Insertion atualiza a rota, a sequência e os) Tj
+0 -13 Td
+(representantes. O cluster é retirado do conjunto de obrigatórios restantes. Em seguida,) Tj
+0 -13 Td
+(local Improve ajusta a solução.) Tj
+0 -13 Td
+(BLOCO 5. INSERCAO DOS OPCIONAIS. TEMPO: SETE A OITO MINUTOS E TRINTA SEGUNDOS.) Tj
+0 -13 Td
+(Depois que os obrigatórios foram atendidos, o algoritmo considera os opcionais. Nesta fase,) Tj
+0 -13 Td
+(better Optional usa a razão entre recompensa e acréscimo de distância.) Tj
+0 -13 Td
+(Em linguagem simples, o critério pergunta: quanto de recompensa é obtido para cada unidade) Tj
+0 -13 Td
+(de distância acrescentada? A inserção precisa continuar respeitando tmax. Se não existir) Tj
+0 -13 Td
+(candidato viável, a fase opcional termina.) Tj
+0 -13 Td
+(BLOCO 6. MELHORIAS LOCAIS DA CONSTRUCAO. TEMPO: OITO MINUTOS E TRINTA SEGUNDOS A DEZ) Tj
+0 -13 Td
+(MINUTOS E TRINTA SEGUNDOS.) Tj
+0 -13 Td
+(Improve Representatives mantém a ordem dos clusters e procura um nó melhor dentro de cada) Tj
+0 -13 Td
+(cluster. Para isso, compara o custo de ir do nó anterior até o candidato e depois do) Tj
+0 -13 Td
+(candidato até o próximo.) Tj
+0 -13 Td
+(Improve Two Opt analisa duas arestas e verifica se a troca reduz a distância. Quando) Tj
+0 -13 Td
+(encontra ganho positivo, inverte um trecho da rota. Também inverte os trechos) Tj
+0 -13 Td
+(correspondentes de sequence e representatives, preservando a consistência.) Tj
+0 -13 Td
+(Local Improve repete essas melhorias enquanto houver alguma alteração. Assim, a solução) Tj
+0 -13 Td
+(gulosa recebe uma intensificação antes de ser devolvida.) Tj
+0 -13 Td
+(BLOCO 7. INICIO DO ILS. TEMPO: DEZ MINUTOS E TRINTA SEGUNDOS A DOZE MINUTOS.) Tj
+0 -13 Td
+(Solve ILS começa registrando o instante inicial. Depois chama solve Greedy para construir a) Tj
+0 -13 Td
+(solução inicial.) Tj
+0 -13 Td
+(Se a construção não produzir uma solução viável, o ILS termina. Caso contrário, a solução) Tj
+0 -13 Td
+(inicial é copiada para best e current.) Tj
+0 -13 Td
+(Também são inicializados o contador de avaliações e o gerador aleatório, usando a semente) Tj
+0 -13 Td
+(informada nas opções.) Tj
+0 -13 Td
+(O laço principal continua enquanto o número de iterações não ultrapassar max iterations e) Tj
+0 -13 Td
+(enquanto o tempo não atingir time limit seconds.) Tj
+0 -13 Td
+(BLOCO 8. PERTURBACAO. TEMPO: DOZE A TREZE MINUTOS E TRINTA SEGUNDOS.) Tj
+0 -13 Td
+(A função perturb recebe a instância, o estado, a força da perturbação e o gerador aleatório.) Tj
+0 -13 Td
+(Primeiro, ela identifica as posições que podem ser removidas. Clusters obrigatórios nunca) Tj
+0 -13 Td
+(entram nessa lista. A lista é embaralhada e limitada pela força da perturbação.) Tj
+0 -13 Td
+(As posições são removidas em ordem decrescente para evitar que a remoção de uma posição) Tj
+0 -13 Td
+(altere os índices das próximas posições.) Tj
+0 -13 Td
+(Depois, se ainda existirem pelo menos dois clusters, o código sorteia um intervalo e) Tj
+0 -13 Td
+(inverte esse trecho de sequence e representatives.) Tj
+0 -13 Td
+(A perturbação não precisa melhorar a solução imediatamente. Sua função é retirar o) Tj
+0 -13 Td
+(algoritmo da região atual e permitir que a busca local explore outra configuração.) Tj
+0 -13 Td
+(BLOCO 9. BUSCA LOCAL DO ILS. TEMPO: TREZE MINUTOS E TRINTA SEGUNDOS A QUINZE MINUTOS E) Tj
+0 -13 Td
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 9 0 R >> >> /Contents 6 0 R >>
+endobj
+7 0 obj
+<< /Length 2825 >>
+stream
+BT
+/F1 10 Tf
+50 770 Td
+13 TL
+(TRINTA SEGUNDOS.) Tj
+0 -13 Td
+(Após a perturbação, local Search primeiro melhora representantes e aplica Two Opt. Depois) Tj
+0 -13 Td
+(tenta inserir novos clusters até não existir inserção viável.) Tj
+0 -13 Td
+(Existe uma regra importante. Os clusters removidos pela perturbação começam no conjunto) Tj
+0 -13 Td
+(excluded. Isso evita que a busca local reinsira imediatamente os mesmos clusters e desfaça) Tj
+0 -13 Td
+(a perturbação.) Tj
+0 -13 Td
+(Se nenhuma inserção for possível enquanto houver elementos excluídos, o conjunto excluded é) Tj
+0 -13 Td
+(liberado. A partir daí, os clusters removidos também podem ser considerados novamente.) Tj
+0 -13 Td
+(Cada inserção é seguida por novas melhorias de representantes e Two Opt. Ao final,) Tj
+0 -13 Td
+(recompute recalcula a distância e a recompensa.) Tj
+0 -13 Td
+(BLOCO 10. ACEITACAO E MELHOR SOLUCAO. TEMPO: QUINZE MINUTOS E TRINTA SEGUNDOS A DEZESSETE) Tj
+0 -13 Td
+(MINUTOS.) Tj
+0 -13 Td
+(Depois da busca local, better compara o candidato com best. Primeiro compara a recompensa.) Tj
+0 -13 Td
+(Se a recompensa for maior, o candidato se torna a melhor solução global. Se as recompensas) Tj
+0 -13 Td
+(forem iguais, vence a menor distância.) Tj
+0 -13 Td
+(Para definir current, o candidato é aceito diretamente quando melhora a solução atual. A) Tj
+0 -13 Td
+(cada vinte iterações, o algoritmo reinicia a partir de best. Nas outras situações, aceita o) Tj
+0 -13 Td
+(candidato mesmo que ele não seja melhor que current. Essa caminhada permite atravessar) Tj
+0 -13 Td
+(ótimos locais.) Tj
+0 -13 Td
+(BLOCO 11. ENCERRAMENTO. TEMPO: DEZESSETE A DEZOITO MINUTOS.) Tj
+0 -13 Td
+(O ILS termina por limite de iterações ou por limite de tempo. A função to Solution) Tj
+0 -13 Td
+(transforma o State final no formato Solution, preenchendo rota, recompensa, distância,) Tj
+0 -13 Td
+(clusters atendidos, arcos selecionados e informações de validação.) Tj
+0 -13 Td
+(No main do ILS, a solução é validada por validate Solution. O programa imprime o resultado) Tj
+0 -13 Td
+(e também pode registrar os dados em um arquivo CSV.) Tj
+0 -13 Td
+(CONCLUSAO.) Tj
+0 -13 Td
+(O código segue a estrutura clássica do Iterated Local Search: construção inicial,) Tj
+0 -13 Td
+(perturbação, busca local, avaliação e repetição.) Tj
+0 -13 Td
+(A construção gulosa atende obrigatórios pelo menor acréscimo de distância e escolhe) Tj
+0 -13 Td
+(opcionais pela melhor razão entre recompensa e distância. A busca local melhora) Tj
+0 -13 Td
+(representantes, usa Two Opt e reinsere clusters. A perturbação remove clusters opcionais e) Tj
+0 -13 Td
+(altera a ordem de um trecho.) Tj
+0 -13 Td
+(Assim, a construção e a busca local intensificam a solução, enquanto a perturbação promove) Tj
+0 -13 Td
+(exploração. O resultado final é a melhor solução encontrada durante todo o processo.) Tj
+0 -13 Td
+ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 9 0 R >> >> /Contents 8 0 R >>
+endobj
+9 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+xref
+0 10
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000127 00000 n 
+0000004313 00000 n 
+0000004439 00000 n 
+0000008631 00000 n 
+0000008757 00000 n 
+0000011634 00000 n 
+0000011760 00000 n 
+trailer
+<< /Size 10 /Root 1 0 R >>
+startxref
+11857
+%%EOF

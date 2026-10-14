@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Painel local para análise da bateria SOP e SOPMV.">
+  <title>Bateria SOPMV — Resultados</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b1220'/%3E%3Cpath d='M13 45V30h8v15zm15 0V18h8v27zm15 0V25h8v20z' fill='%2338bdf8'/%3E%3C/svg%3E">
+  <style>
+    :root{--bg:#07101d;--panel:#0d1929;--panel2:#111f31;--line:#23344a;--text:#e8f0f8;--muted:#91a3b8;--cyan:#38bdf8;--orange:#fb923c;--green:#34d399;--red:#fb7185;--violet:#a78bfa;--radius:14px}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    button,select,input{font:inherit} .shell{max-width:1500px;margin:auto;padding:24px}.topbar{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:22px}
+    h1{font-size:clamp(1.55rem,3vw,2.25rem);line-height:1.1;margin:0 0 6px;letter-spacing:-.035em}.eyebrow{margin:0 0 8px;color:var(--cyan);font-weight:750;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase}.subtitle{margin:0;color:var(--muted)}
+    .button{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:10px 14px;border-radius:9px;cursor:pointer;font-weight:700}.button:hover{border-color:var(--cyan)}.button.primary{background:var(--cyan);border-color:var(--cyan);color:#062033}.file-input{display:none}
+    .notice{display:none;background:#2a1f10;border:1px solid #805d22;color:#ffd99a;padding:11px 14px;border-radius:10px;margin-bottom:16px}.notice.show{display:block}.error{background:#2e1420;border-color:#8f2949;color:#ffc1d1}
+    .filters{display:grid;grid-template-columns:1.5fr repeat(3,minmax(135px,.7fr));gap:12px;background:var(--panel);border:1px solid var(--line);padding:15px;border-radius:var(--radius);margin-bottom:16px}.field label{display:block;color:var(--muted);font-size:.78rem;font-weight:700;margin:0 0 5px;text-transform:uppercase;letter-spacing:.06em}.field input,.field select{width:100%;background:#091525;color:var(--text);border:1px solid var(--line);padding:10px 11px;border-radius:8px;outline:none}.field input:focus,.field select:focus{border-color:var(--cyan);box-shadow:0 0 0 3px #38bdf820}
+    .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}.kpi{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;min-height:104px}.kpi .label{color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}.kpi .value{display:block;font-size:clamp(1.5rem,2.5vw,2.2rem);font-weight:800;margin-top:7px;letter-spacing:-.04em}.kpi .detail{color:var(--muted);font-size:.8rem}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;min-width:0}.card h2{font-size:1rem;margin:0}.card-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:14px}.card-note{color:var(--muted);font-size:.78rem}.chart{min-height:265px;overflow:hidden}.chart svg{display:block;width:100%;height:auto}.axis{stroke:#2b3c52;stroke-width:1}.axis-text{fill:#91a3b8;font-size:12px}.bar-label{fill:#e8f0f8;font-size:13px;font-weight:700}.empty{height:240px;display:grid;place-items:center;color:var(--muted)}
+    .legend{display:flex;gap:13px;flex-wrap:wrap;color:var(--muted);font-size:.78rem}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}.table-card{padding:0;overflow:hidden}.table-head{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line)}.table-wrap{overflow:auto;max-height:540px}table{width:100%;border-collapse:collapse;white-space:nowrap;font-size:.84rem}th{text-align:left;color:var(--muted);background:#0b1726;position:sticky;top:0;z-index:1;font-size:.73rem;text-transform:uppercase;letter-spacing:.05em}th,td{padding:11px 13px;border-bottom:1px solid #19293c}tbody tr:hover{background:#12243a}.num{text-align:right;font-variant-numeric:tabular-nums}.pill{padding:4px 8px;border-radius:99px;font-size:.72rem;font-weight:800}.pill.ok{background:#12382e;color:#79e6bd}.pill.warn{background:#3a2b13;color:#ffc66f}.pill.bad{background:#421b29;color:#ff9bb2}.solver{font-weight:800}.CPLEX{color:var(--cyan)}.ILS{color:var(--orange)}.GREEDY{color:var(--green)}.SA_PD{color:var(--violet)}
+    .footer{color:var(--muted);font-size:.78rem;text-align:center;margin-top:18px}.loading{padding:80px 20px;text-align:center;color:var(--muted)}
+    @media(max-width:950px){.kpis{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.filters{grid-template-columns:1fr 1fr}.topbar{align-items:flex-start;flex-direction:column}}
+    @media(max-width:580px){.shell{padding:15px}.filters,.kpis{grid-template-columns:1fr}.top-actions{display:flex;gap:8px;flex-wrap:wrap}.card{padding:14px}}
+  </style>
+</head>
+<body>
+<main class="shell">
+  <header class="topbar">
+    <div><p class="eyebrow">Análise experimental</p><h1>Bateria SOP / SOPMV</h1><p class="subtitle" id="sourceLabel">Carregando resultados consolidados…</p></div>
+    <div class="top-actions">
+      <label class="button" for="csvFile">Abrir outro CSV</label><input class="file-input" id="csvFile" type="file" accept=".csv,text/csv">
+      <button class="button primary" id="exportButton" type="button">Exportar filtrados</button>
+    </div>
+  </header>
+  <div class="notice" id="notice"></div>
+  <section class="filters" aria-label="Filtros">
+    <div class="field"><label for="search">Instância</label><input id="search" type="search" placeholder="Ex.: T80_p2"></div>
+    <div class="field"><label for="solverFilter">Método</label><select id="solverFilter"><option value="">Todos</option></select></div>
+    <div class="field"><label for="groupFilter">Grupo</label><select id="groupFilter"><option value="">Todos</option></select></div>
+    <div class="field"><label for="statusFilter">Resultado</label><select id="statusFilter"><option value="">Todos</option><option value="viavel">Com solução viável</option><option value="inviavel">Sem solução viável</option></select></div>
+  </section>
+  <section class="kpis">
+    <article class="kpi"><span class="label">Execuções exibidas</span><strong class="value" id="kRuns">—</strong><span class="detail" id="kRunsDetail"></span></article>
+    <article class="kpi"><span class="label">Soluções viáveis</span><strong class="value" id="kFeasible">—</strong><span class="detail">com objetivo registrado</span></article>
+    <article class="kpi"><span class="label">Ótimos comprovados</span><strong class="value" id="kOptimal">—</strong><span class="detail">pelo resolvedor exato</span></article>
+    <article class="kpi"><span class="label">Tempo médio</span><strong class="value" id="kTime">—</strong><span class="detail">por execução</span></article>
+    <article class="kpi"><span class="label">Qualidade média</span><strong class="value" id="kQuality">—</strong><span class="detail">vs. melhor solução por instância</span></article>
+  </section>
+  <section class="grid">
+    <article class="card"><div class="card-head"><div><h2>Qualidade por método</h2><span class="card-note">Objetivo ÷ melhor objetivo observado na instância</span></div></div><div class="chart" id="qualityChart"></div></article>
+    <article class="card"><div class="card-head"><div><h2>Tempo médio por método</h2><span class="card-note">Escala logarítmica em segundos</span></div></div><div class="chart" id="timeChart"></div></article>
+    <article class="card"><div class="card-head"><div><h2>Taxa de solução viável</h2><span class="card-note">Separada por família de instâncias</span></div></div><div class="chart" id="feasibleChart"></div></article>
+    <article class="card"><div class="card-head"><div><h2>Tempo × qualidade</h2><span class="card-note">Cada ponto representa uma execução viável</span></div><div class="legend" id="legend"></div></div><div class="chart" id="scatterChart"></div></article>
+  </section>
+  <section class="card table-card">
+    <div class="table-head"><div><h2>Resultados detalhados</h2><span class="card-note" id="tableCount"></span></div></div>
+    <div class="table-wrap"><table><thead><tr><th>Método</th><th>Grupo</th><th>Instância</th><th>Status</th><th class="num">Objetivo</th><th class="num">Qualidade</th><th class="num">Tempo (s)</th><th class="num">Distância</th><th class="num">Gap</th><th>Obrigatórios</th><th>Validação</th></tr></thead><tbody id="resultsBody"></tbody></table></div>
+  </section>
+  <p class="footer">Painel local · os filtros afetam todos os indicadores e gráficos</p>
+</main>
+<script>
+const COLORS={CPLEX:'#38bdf8',ILS:'#fb923c',GREEDY:'#34d399',SA_PD:'#a78bfa'};
+const state={all:[],filtered:[],source:'experiments/berlin52_bateria_completa/resultados.csv'};
+const $=id=>document.getElementById(id);
+
+function parseCSV(text){
+  const rows=[];let row=[],field='',quoted=false;
+  for(let i=0;i<text.length;i++){const c=text[i],n=text[i+1];if(quoted){if(c==='"'&&n==='"'){field+='"';i++;}else if(c==='"')quoted=false;else field+=c;}else if(c==='"')quoted=true;else if(c===','){row.push(field);field='';}else if(c==='\n'){row.push(field);rows.push(row);row=[];field='';}else if(c!=='\r')field+=c;}
+  if(field||row.length){row.push(field);rows.push(row)} const head=rows.shift()||[];
+  return rows.filter(r=>r.some(Boolean)).map(r=>Object.fromEntries(head.map((h,i)=>[h,r[i]??''])));
+}
+function num(v){const n=Number(v);return v!==''&&Number.isFinite(n)?n:null}
+function feasible(r){return num(r.objective)!==null && !/NoFeasible|Infeasible/i.test(r.status)}
+function enrich(rows){
+  const best={}; rows.forEach(r=>{const o=num(r.objective);if(o!==null)best[r.instance]=Math.max(best[r.instance]??-Infinity,o)});
+  return rows.map(r=>({...r,_objective:num(r.objective),_time:num(r.elapsed_seconds),_distance:num(r.total_distance),_gap:num(r.gap),_feasible:feasible(r),_quality:num(r.objective)!==null&&best[r.instance]>0?100*num(r.objective)/best[r.instance]:null}));
+}
+function unique(key){return [...new Set(state.all.map(r=>r[key]).filter(Boolean))]}
+function populateSelect(id,values){const el=$(id);el.innerHTML='<option value="">Todos</option>'+values.map(v=>`<option>${escapeHTML(v)}</option>`).join('')}
+function escapeHTML(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function mean(a){const b=a.filter(v=>v!==null&&Number.isFinite(v));return b.length?b.reduce((x,y)=>x+y,0)/b.length:null}
+function fmt(v,d=2){return v===null||!Number.isFinite(v)?'—':v.toLocaleString('pt-BR',{maximumFractionDigits:d})}
+function percent(v){return v===null?'—':fmt(v,1)+'%'}
+function solverOrder(a,b){return ['CPLEX','ILS','GREEDY','SA_PD'].indexOf(a)-['CPLEX','ILS','GREEDY','SA_PD'].indexOf(b)}
+
+function applyFilters(){
+  const q=$('search').value.trim().toLowerCase(),s=$('solverFilter').value,g=$('groupFilter').value,status=$('statusFilter').value;
+  state.filtered=state.all.filter(r=>(!q||r.instance.toLowerCase().includes(q))&&(!s||r.solver===s)&&(!g||r.grupo_instancia===g)&&(!status||(status==='viavel'?r._feasible:!r._feasible)));
+  render();
+}
+function render(){renderKPIs();renderBars('qualityChart',aggregate('_quality'),v=>percent(v),100);renderBars('timeChart',aggregate('_time'),v=>fmt(v,3)+' s',null,true);renderFeasible();renderScatter();renderTable()}
+function aggregate(key){return unique('solver').sort(solverOrder).map(s=>({label:s,value:mean(state.filtered.filter(r=>r.solver===s).map(r=>r[key])),color:COLORS[s]}))}
+function renderKPIs(){const r=state.filtered,ok=r.filter(x=>x._feasible);$('kRuns').textContent=r.length;$('kRunsDetail').textContent=`de ${state.all.length} registros`;$('kFeasible').textContent=r.length?percent(100*ok.length/r.length):'—';$('kOptimal').textContent=r.filter(x=>/^Optimal$/i.test(x.status)).length;$('kTime').textContent=mean(r.map(x=>x._time))===null?'—':fmt(mean(r.map(x=>x._time)),3)+' s';$('kQuality').textContent=percent(mean(ok.map(x=>x._quality)))}
+function renderBars(id,data,format,fixedMax=null,log=false){
+  const valid=data.filter(d=>d.value!==null);if(!valid.length){$(id).innerHTML='<div class="empty">Sem dados para os filtros atuais</div>';return}
+  const W=620,H=270,left=115,right=82,top=18,rowH=56;const transformed=v=>log?Math.log10(v+0.0001)+4:v;const max=fixedMax??Math.max(...valid.map(d=>transformed(d.value)))*1.08;
+  let svg=`<svg viewBox="0 0 ${W} ${H}" role="img"><line class="axis" x1="${left}" y1="12" x2="${left}" y2="244"/>`;
+  data.forEach((d,i)=>{const y=top+i*rowH,w=d.value===null?0:(W-left-right)*transformed(d.value)/max;svg+=`<text class="bar-label" x="${left-12}" y="${y+22}" text-anchor="end">${d.label}</text><rect x="${left}" y="${y+5}" width="${Math.max(0,w)}" height="25" rx="5" fill="${d.color}" opacity=".88"/><text class="bar-label" x="${Math.min(W-right+7,left+w+9)}" y="${y+22}">${format(d.value)}</text>`});svg+='</svg>';$(id).innerHTML=svg;
+}
+function renderFeasible(){
+  const solvers=unique('solver').sort(solverOrder),groups=unique('grupo_instancia');if(!state.filtered.length){$('feasibleChart').innerHTML='<div class="empty">Sem dados para os filtros atuais</div>';return}
+  const W=620,H=270,left=58,bottom=42,top=15,plotH=H-bottom-top,groupW=(W-left-10)/Math.max(groups.length,1),barW=Math.min(24,(groupW-20)/Math.max(solvers.length,1));let svg=`<svg viewBox="0 0 ${W} ${H}" role="img">`;
+  [0,50,100].forEach(v=>{const y=top+plotH*(1-v/100);svg+=`<line class="axis" x1="${left}" y1="${y}" x2="${W-8}" y2="${y}"/><text class="axis-text" x="${left-8}" y="${y+4}" text-anchor="end">${v}%</text>`});
+  groups.forEach((g,gi)=>{const cx=left+groupW*(gi+.5);solvers.forEach((s,si)=>{const rows=state.filtered.filter(r=>r.grupo_instancia===g&&r.solver===s),rate=rows.length?100*rows.filter(r=>r._feasible).length/rows.length:0,x=cx-(solvers.length*barW)/2+si*barW,y=top+plotH*(1-rate/100);svg+=`<rect x="${x}" y="${y}" width="${barW-3}" height="${top+plotH-y}" rx="3" fill="${COLORS[s]}"><title>${s} · ${g}: ${fmt(rate,1)}%</title></rect>`});svg+=`<text class="axis-text" x="${cx}" y="${H-16}" text-anchor="middle">${g}</text>`});svg+='</svg>';$('feasibleChart').innerHTML=svg;
+}
+function renderScatter(){
+  const rows=state.filtered.filter(r=>r._feasible&&r._time!==null&&r._quality!==null),solvers=unique('solver').sort(solverOrder);$('legend').innerHTML=solvers.map(s=>`<span><i class="dot" style="background:${COLORS[s]}"></i>${s}</span>`).join('');if(!rows.length){$('scatterChart').innerHTML='<div class="empty">Sem soluções viáveis para exibir</div>';return}
+  const W=620,H=270,L=58,R=18,T=15,B=42,times=rows.map(r=>Math.log10(r._time+0.0001)),minX=Math.min(...times),maxX=Math.max(...times),span=Math.max(maxX-minX,.1);let svg=`<svg viewBox="0 0 ${W} ${H}" role="img">`;
+  [0,25,50,75,100].forEach(v=>{const y=T+(H-T-B)*(1-v/100);svg+=`<line class="axis" x1="${L}" y1="${y}" x2="${W-R}" y2="${y}"/><text class="axis-text" x="${L-8}" y="${y+4}" text-anchor="end">${v}%</text>`});rows.forEach(r=>{const x=L+(W-L-R)*(Math.log10(r._time+0.0001)-minX)/span,y=T+(H-T-B)*(1-r._quality/100);svg+=`<circle cx="${x}" cy="${y}" r="5" fill="${COLORS[r.solver]}" opacity=".72"><title>${r.solver} · ${r.instance}\n${fmt(r._time,4)} s · ${percent(r._quality)}</title></circle>`});svg+=`<text class="axis-text" x="${(L+W-R)/2}" y="${H-12}" text-anchor="middle">tempo (escala logarítmica)</text></svg>`;$('scatterChart').innerHTML=svg;
+}
+function renderTable(){const rows=[...state.filtered].sort((a,b)=>a.instance.localeCompare(b.instance)||solverOrder(a.solver,b.solver));$('tableCount').textContent=`${rows.length} linhas`;$('resultsBody').innerHTML=rows.map(r=>{const klass=r._feasible?'ok':/Infeasible/i.test(r.status)?'bad':'warn';return `<tr><td class="solver ${r.solver}">${escapeHTML(r.solver)}</td><td>${escapeHTML(r.grupo_instancia)}</td><td>${escapeHTML(r.instance)}</td><td><span class="pill ${klass}">${escapeHTML(r.status)}</span></td><td class="num">${fmt(r._objective)}</td><td class="num">${percent(r._quality)}</td><td class="num">${fmt(r._time,4)}</td><td class="num">${fmt(r._distance)}</td><td class="num">${r._gap===null?'—':percent(100*r._gap)}</td><td>${escapeHTML(r.mandatory_sets||'—')}</td><td>${r.solution_valid==='true'?'✓':'—'}</td></tr>`}).join('')}
+function csvEscape(v){const s=String(v??'');return /[",\n]/.test(s)?'"'+s.replaceAll('"','""')+'"':s}
+function exportFiltered(){if(!state.filtered.length)return;const keys=Object.keys(state.filtered[0]).filter(k=>!k.startsWith('_')),text=[keys.join(','),...state.filtered.map(r=>keys.map(k=>csvEscape(r[k])).join(','))].join('\n'),a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:'text/csv;charset=utf-8'}));a.download='resultados_filtrados.csv';a.click();URL.revokeObjectURL(a.href)}
+function loadText(text,label){const rows=parseCSV(text);if(!rows.length||!('solver' in rows[0]))throw new Error('CSV vazio ou sem a coluna solver.');state.all=enrich(rows);state.source=label;populateSelect('solverFilter',unique('solver').sort(solverOrder));populateSelect('groupFilter',unique('grupo_instancia'));$('sourceLabel').textContent=`${label} · ${rows.length} execuções carregadas`;$('notice').className='notice'+(rows.length<288?' show':'');$('notice').textContent=rows.length<288?`Bateria parcial: foram encontradas ${rows.length} de 288 execuções esperadas. O painel continuará atualizando normalmente com os dados disponíveis.`:'';applyFilters()}
+async function init(){try{const res=await fetch('../experiments/berlin52_bateria_completa/resultados.csv',{cache:'no-store'});if(!res.ok)throw new Error();loadText(await res.text(),'experiments/berlin52_bateria_completa/resultados.csv')}catch{$('notice').className='notice error show';$('notice').innerHTML='Não foi possível carregar o CSV automaticamente. Inicie pelo servidor Python indicado no README ou use <strong>Abrir outro CSV</strong>.';$('sourceLabel').textContent='Aguardando arquivo CSV';state.all=[];render()}}
+['search','solverFilter','groupFilter','statusFilter'].forEach(id=>$(id).addEventListener(id==='search'?'input':'change',applyFilters));$('exportButton').addEventListener('click',exportFiltered);$('csvFile').addEventListener('change',async e=>{const f=e.target.files[0];if(f)try{loadText(await f.text(),f.name)}catch(err){$('notice').className='notice error show';$('notice').textContent=err.message}});init();
+</script>
+</body>
+</html>

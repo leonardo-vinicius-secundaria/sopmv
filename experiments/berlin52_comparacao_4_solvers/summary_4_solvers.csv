@@ -1,0 +1,5 @@
+solver,executions,solutions_found,valid_solutions,best_or_tied,mean_seconds_all,mean_seconds_feasible
+CPLEX,32,27,27,2,9.15753251,10.0028213
+SA_PD,32,27,27,26,3.00000303,3.00000321
+GREEDY,32,27,27,9,4.50789688e-05,5.27552593e-05
+ILS,32,27,27,27,2.53126953,3.00002254

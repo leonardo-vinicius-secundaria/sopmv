@@ -1,0 +1,2 @@
+instance,variant,mandatory_ratio,mandatory_sets,status,solver_status,objective,best_bound,gap,elapsed_seconds,tree_nodes,total_distance,tmax,route,visited_nodes,served_sets,mandatory_satisfied,solution_valid,validation_message
+"11berlin52_T60_p1_MV30_seed20260928",SOPMV,0.272727272727273,"1;8;11",Feasible,"GREEDY_INSERTION",29,,,1.323e-05,306,2360,2424,"1;13;51;12;25;1","1;12;13;25;51","1;4;8;11",true,true,"solucao valida"

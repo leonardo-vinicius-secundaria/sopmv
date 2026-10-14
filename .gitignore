@@ -1,0 +1,16 @@
+# Artefatos de compilação
+/build/
+
+# Caches e ambientes Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Arquivos locais de editores e sistema
+*.swp
+*~
+.DS_Store
+
+# Saídas temporárias de experimentos
+*.tmp
+*.log

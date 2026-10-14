@@ -1,0 +1,120 @@
+.NH 1
+ROTEIRO DE AUDIO: HEURISTICA CONSTRUTIVA E ITERATED LOCAL SEARCH
+.PP
+Roteiro baseado nos arquivos src/greedy e src/ils do projeto TCC SOPMV.
+Duração estimada: quinze a dezoito minutos.
+.PP
+ORIENTACAO DE NARRACAO
+.PP
+Este texto foi escrito para ser lido em voz alta. Símbolos de programação devem ser pronunciados por extenso. Por exemplo, não ler exclamação, dois pontos ou ponto e vírgula quando eles aparecem apenas como parte do código. Os nomes de funções são nomes técnicos: solve Greedy, solve ILS, best Insertion, local Search, perturb e improve Two Opt.
+.PP
+.NH 1
+BLOCO 1. CONTEXTUALIZACAO E FLUXO GERAL. TEMPO: ZERO A UM MINUTO.
+.PP
+Olá. Neste episódio, vou explicar a implementação da heurística construtiva gulosa e do algoritmo Iterated Local Search, conhecido como ILS, desenvolvido para o problema de seleção de conjuntos com roteamento.
+.PP
+A ideia geral é construir uma rota que parte do depósito, visita representantes de determinados clusters e retorna ao depósito. Cada cluster possui uma recompensa, cada nó possui uma posição na rede e existe uma restrição de distância máxima, representada por tmax.
+.PP
+O objetivo é maximizar a recompensa, respeitando a distância máxima. Quando duas soluções têm a mesma recompensa, o algoritmo prefere a que possui menor distância.
+.PP
+A heurística gulosa está em src barra greedy. O ILS está em src barra ils. O main do greedy e o main do ILS são programas separados. O main do ILS chama solve ILS, e solve ILS reutiliza solve Greedy, que está em greedy ponto cpp.
+.PP
+O fluxo é: leitura da instância; aplicação dos conjuntos obrigatórios; construção gulosa; perturbação; busca local; comparação com a melhor solução; e repetição até atingir o limite de iterações ou de tempo.
+.NH 1
+BLOCO 2. ESTRUTURAS DE CONFIGURACAO. TEMPO: UM A DOIS MINUTOS.
+.PP
+No arquivo ils ponto hpp existe a estrutura ILS Options. Ela contém o número máximo de iterações, a força da perturbação, o limite de tempo em segundos e a semente do gerador aleatório.
+.PP
+A função pública é solve ILS, que recebe uma instância e as opções e devolve uma solução.
+.PP
+A estrutura Instance, definida em instance ponto hpp, guarda clusters, nós, distâncias, depósito, conjuntos obrigatórios e o limite tmax. A estrutura Solution, definida em solution ponto hpp, guarda a resposta final: sequência de clusters, representantes, rota, recompensa, distância, status e informações de validação.
+.PP
+Internamente, o ILS utiliza a estrutura State. Ela contém sequence, representatives, distance e reward. Sequence é a ordem dos clusters. Representatives é o nó escolhido para representar cada cluster. Distance é a distância da rota e reward é a recompensa total.
+.PP
+Durante a execução, o ILS mantém dois estados. Current é a solução usada na próxima iteração. Best é a melhor solução encontrada desde o início.
+.NH 1
+BLOCO 3. CONSTRUCAO INICIAL. TEMPO: DOIS A CINCO MINUTOS.
+.PP
+A construção começa em solve Greedy. A rota inicial contém apenas o depósito no início e no fim. Os vetores sequence e representatives começam vazios.
+.PP
+Os clusters são divididos em dois conjuntos: remaining mandatory, que contém os obrigatórios, e remaining optional, que contém os opcionais, excluindo o depósito.
+.PP
+A construção possui duas fases. Primeiro atende os obrigatórios. Depois tenta inserir os opcionais.
+.PP
+Cada possibilidade de inserção é representada pela estrutura Candidate. Ela guarda o identificador do cluster, o identificador do nó, a posição de inserção, o acréscimo de distância e a recompensa.
+.PP
+Para inserir um nó X entre os nós A e B, o código calcula o acréscimo como: distância de A até X, mais distância de X até B, menos distância de A até B. Somente as duas arestas afetadas são analisadas.
+.NH 1
+BLOCO 4. INSERCAO DOS OBRIGATORIOS. TEMPO: CINCO A SETE MINUTOS.
+.PP
+Enquanto existirem clusters obrigatórios, best Insertion percorre cada cluster elegível, cada nó do cluster e cada posição possível da rota.
+.PP
+Se a nova distância ultrapassar tmax, o candidato é descartado. Na fase obrigatória, better Mandatory escolhe o candidato com menor acréscimo de distância. Empates são resolvidos pelo identificador do cluster, pelo identificador do nó e pela posição.
+.PP
+Depois de escolher o candidato, apply Insertion atualiza a rota, a sequência e os representantes. O cluster é retirado do conjunto de obrigatórios restantes. Em seguida, local Improve ajusta a solução.
+.NH 1
+BLOCO 5. INSERCAO DOS OPCIONAIS. TEMPO: SETE A OITO MINUTOS E TRINTA SEGUNDOS.
+.PP
+Depois que os obrigatórios foram atendidos, o algoritmo considera os opcionais. Nesta fase, better Optional usa a razão entre recompensa e acréscimo de distância.
+.PP
+Em linguagem simples, o critério pergunta: quanto de recompensa é obtido para cada unidade de distância acrescentada? A inserção precisa continuar respeitando tmax. Se não existir candidato viável, a fase opcional termina.
+.NH 1
+BLOCO 6. MELHORIAS LOCAIS DA CONSTRUCAO. TEMPO: OITO MINUTOS E TRINTA SEGUNDOS A DEZ MINUTOS E TRINTA SEGUNDOS.
+.PP
+Improve Representatives mantém a ordem dos clusters e procura um nó melhor dentro de cada cluster. Para isso, compara o custo de ir do nó anterior até o candidato e depois do candidato até o próximo.
+.PP
+Improve Two Opt analisa duas arestas e verifica se a troca reduz a distância. Quando encontra ganho positivo, inverte um trecho da rota. Também inverte os trechos correspondentes de sequence e representatives, preservando a consistência.
+.PP
+Local Improve repete essas melhorias enquanto houver alguma alteração. Assim, a solução gulosa recebe uma intensificação antes de ser devolvida.
+.NH 1
+BLOCO 7. INICIO DO ILS. TEMPO: DEZ MINUTOS E TRINTA SEGUNDOS A DOZE MINUTOS.
+.PP
+Solve ILS começa registrando o instante inicial. Depois chama solve Greedy para construir a solução inicial.
+.PP
+Se a construção não produzir uma solução viável, o ILS termina. Caso contrário, a solução inicial é copiada para best e current.
+.PP
+Também são inicializados o contador de avaliações e o gerador aleatório, usando a semente informada nas opções.
+.PP
+O laço principal continua enquanto o número de iterações não ultrapassar max iterations e enquanto o tempo não atingir time limit seconds.
+.NH 1
+BLOCO 8. PERTURBACAO. TEMPO: DOZE A TREZE MINUTOS E TRINTA SEGUNDOS.
+.PP
+A função perturb recebe a instância, o estado, a força da perturbação e o gerador aleatório.
+.PP
+Primeiro, ela identifica as posições que podem ser removidas. Clusters obrigatórios nunca entram nessa lista. A lista é embaralhada e limitada pela força da perturbação.
+.PP
+As posições são removidas em ordem decrescente para evitar que a remoção de uma posição altere os índices das próximas posições.
+.PP
+Depois, se ainda existirem pelo menos dois clusters, o código sorteia um intervalo e inverte esse trecho de sequence e representatives.
+.PP
+A perturbação não precisa melhorar a solução imediatamente. Sua função é retirar o algoritmo da região atual e permitir que a busca local explore outra configuração.
+.NH 1
+BLOCO 9. BUSCA LOCAL DO ILS. TEMPO: TREZE MINUTOS E TRINTA SEGUNDOS A QUINZE MINUTOS E TRINTA SEGUNDOS.
+.PP
+Após a perturbação, local Search primeiro melhora representantes e aplica Two Opt. Depois tenta inserir novos clusters até não existir inserção viável.
+.PP
+Existe uma regra importante. Os clusters removidos pela perturbação começam no conjunto excluded. Isso evita que a busca local reinsira imediatamente os mesmos clusters e desfaça a perturbação.
+.PP
+Se nenhuma inserção for possível enquanto houver elementos excluídos, o conjunto excluded é liberado. A partir daí, os clusters removidos também podem ser considerados novamente.
+.PP
+Cada inserção é seguida por novas melhorias de representantes e Two Opt. Ao final, recompute recalcula a distância e a recompensa.
+.NH 1
+BLOCO 10. ACEITACAO E MELHOR SOLUCAO. TEMPO: QUINZE MINUTOS E TRINTA SEGUNDOS A DEZESSETE MINUTOS.
+.PP
+Depois da busca local, better compara o candidato com best. Primeiro compara a recompensa. Se a recompensa for maior, o candidato se torna a melhor solução global. Se as recompensas forem iguais, vence a menor distância.
+.PP
+Para definir current, o candidato é aceito diretamente quando melhora a solução atual. A cada vinte iterações, o algoritmo reinicia a partir de best. Nas outras situações, aceita o candidato mesmo que ele não seja melhor que current. Essa caminhada permite atravessar ótimos locais.
+.NH 1
+BLOCO 11. ENCERRAMENTO. TEMPO: DEZESSETE A DEZOITO MINUTOS.
+.PP
+O ILS termina por limite de iterações ou por limite de tempo. A função to Solution transforma o State final no formato Solution, preenchendo rota, recompensa, distância, clusters atendidos, arcos selecionados e informações de validação.
+.PP
+No main do ILS, a solução é validada por validate Solution. O programa imprime o resultado e também pode registrar os dados em um arquivo CSV.
+.NH 1
+CONCLUSAO.
+.PP
+O código segue a estrutura clássica do Iterated Local Search: construção inicial, perturbação, busca local, avaliação e repetição.
+.PP
+A construção gulosa atende obrigatórios pelo menor acréscimo de distância e escolhe opcionais pela melhor razão entre recompensa e distância. A busca local melhora representantes, usa Two Opt e reinsere clusters. A perturbação remove clusters opcionais e altera a ordem de um trecho.
+.PP
+Assim, a construção e a busca local intensificam a solução, enquanto a perturbação promove exploração. O resultado final é a melhor solução encontrada durante todo o processo.
