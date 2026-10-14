@@ -1,15 +1,36 @@
 # Artefatos de compilação
 /build/
+/cmake-build-*/
+CMakeCache.txt
+CMakeFiles/
+compile_commands.json
+CTestTestfile.cmake
+Testing/
+
+# Cobertura e saídas locais de testes
+*.gcda
+*.gcno
+*.gcov
+coverage/
+test-results/
 
 # Caches e ambientes Python
 __pycache__/
 *.py[cod]
 .venv/
+.pytest_cache/
 
 # Arquivos locais de editores e sistema
 *.swp
+*.swo
 *~
+*.bak
+*.old
+*.orig
+*.rej
 .DS_Store
+.idea/
+.vscode/
 
 # Saídas temporárias de experimentos
 *.tmp
