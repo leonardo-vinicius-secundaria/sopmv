@@ -2,3 +2,8 @@ instance,variant,mandatory_ratio,mandatory_sets,status,solver_status,objective,b
 "11berlin52_T100_p2",SOP,0,"",Feasible,"ILS iterations=1",2554,,,0.001133126,738,3826,4040,"1;45;19;51;13;26;47;42;21;31;22;1","1;13;19;21;22;26;31;42;45;47;51","1;2;3;4;6;7;8;9;10;11",true,true,"solucao valida"
 "11berlin52_T100_p2",SOP,0,"",Feasible,"ILS iterations=1",2554,,,0.001059496,738,3826,4040,"1;45;19;51;13;26;47;42;21;31;22;1","1;13;19;21;22;26;31;42;45;47;51","1;2;3;4;6;7;8;9;10;11",true,true,"solucao valida"
 "11berlin52_T100_p2",SOP,0,"",Feasible,"ILS iterations=1",2554,,,0.001332566,738,3826,4040,"1;45;19;51;13;26;47;42;21;31;22;1","1;13;19;21;22;26;31;42;45;47;51","1;2;3;4;6;7;8;9;10;11",true,true,"solucao valida"
+"small_known",SOP,0,"",Feasible,"ILS iterations=1",8,,,0.000286319,4,4,4,"1;3;1","1;3","2",true,true,"solucao valida"
+"small_known",SOP,0,"",Feasible,"ILS iterations=1",8,,,0.000444713,4,4,4,"1;3;1","1;3","2",true,true,"solucao valida"
+"11berlin52_T100_p2",SOP,0,"",Feasible,"ILS iterations=1",2554,,,0.008544227,738,3826,4040,"1;45;19;51;13;26;47;42;21;31;22;1","1;13;19;21;22;26;31;42;45;47;51","1;2;3;4;6;7;8;9;10;11",true,true,"solucao valida"
+"11berlin52_T40_p1",SOP,0,"",Feasible,"ILS iterations=20",37,,,0.000368639,9514,986,1616,"1;23;31;19;45;32;1","1;19;23;31;32;45","3;4;7;9;10",true,true,"solucao valida"
+"11berlin52_T40_p1_MV10",SOPMV,0.0909090909090909,"2",Feasible,"ILS_BETTER_ACCEPTANCE iterations=100",35,,,0.022294025,50784,1534,1616,"1;42;21;18;45;32;1","1;18;21;32;42;45","2;4;7;9;10",true,true,"solucao valida"

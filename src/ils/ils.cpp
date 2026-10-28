@@ -9,6 +9,7 @@
 #include <random>
 #include <set>
 #include <vector>
+#include <iostream>
 
 using namespace std;
 
@@ -47,6 +48,34 @@ double routeDistance(const Instance& instance, const State& state) {
         total += instance.distanceById(route[i], route[i + 1]);
     }
     return total;
+}
+
+template <typename Range>
+void printRange(const char* name, const Range& values) {
+    cout << "    " << name << " = [";
+    bool first = true;
+    for (const auto& value : values) {
+        if (!first) cout << ", ";
+        cout << value;
+        first = false;
+    }
+    cout << "]\n";
+}
+
+void printState(const Instance& instance, const State& state, const char* title) {
+    cout << "\n[ESTADO] " << title << "\n";
+    cout << "    Cada coluna i liga sequence[i] ao representatives[i].\n";
+    cout << "    indice          = [";
+    for (size_t i = 0; i < state.sequence.size(); ++i) {
+        if (i != 0) cout << ", ";
+        cout << i;
+    }
+    cout << "]\n";
+    printRange("sequence        (clusters)", state.sequence);
+    printRange("representatives (nos)     ", state.representatives);
+    printRange("rota: deposito + nos + deposito", routeOf(instance, state));
+    cout << "    recompensa=" << state.reward << " distancia=" << state.distance
+              << " tmax=" << instance.tmax << "\n";
 }
 
 void recompute(const Instance& instance, State& state) {
@@ -93,8 +122,11 @@ void improveRepresentatives(const Instance& instance, State& state,
 }
 
 void improveTwoOpt(const Instance& instance, State& state, int64_t& evaluations) {
+    
+    if (state.sequence.size() < 2) { return; }
+
     bool changed = true;
-    while (changed && state.sequence.size() >= 2) {
+    while (changed) {
         changed = false;
         const auto route = routeOf(instance, state);
         double best_gain = 0.0;
@@ -198,6 +230,7 @@ set<int> perturb(const Instance& instance, State& state, int strength,
     removable.resize(min(removable.size(), static_cast<size_t>(strength)));
     sort(removable.rbegin(), removable.rend());
     set<int> removed;
+    printRange("removed logo apos a declaracao (ainda vazio)", removed);
     for (size_t index : removable) {
         removed.insert(state.sequence[index]);
         state.sequence.erase(state.sequence.begin() + static_cast<ptrdiff_t>(index));
@@ -217,10 +250,13 @@ set<int> perturb(const Instance& instance, State& state, int strength,
 }
 
 Solution toSolution(const Instance& instance, const State& state, double elapsed,
-                    int64_t evaluations, int iterations) {
+                    int64_t evaluations, int iterations, int resets,
+                    int reset_interval) {
     Solution solution;
     solution.status = SolveStatus::FeasibleOther;
-    solution.solver_status = "ILS iterations=" + to_string(iterations);
+    solution.solver_status = "ILS iterations=" + to_string(iterations) +
+        " resets=" + to_string(resets) +
+        " reset_interval=" + to_string(reset_interval);
     solution.has_incumbent = true;
     solution.objective = state.reward;
     solution.total_distance = state.distance;
@@ -255,23 +291,29 @@ Solution solveILS(const Instance& instance, const ILSOptions& options) {
     int64_t evaluations = 0;
     mt19937 rng(options.seed);
     int iterations = 0;
+    int resets = 0;
     for (; iterations < options.max_iterations; ++iterations) {
         const double elapsed = chrono::duration<double>(
             chrono::steady_clock::now() - start).count();
         if (options.time_limit_seconds > 0.0 && elapsed >= options.time_limit_seconds) break;
         State candidate = current;
+        printState(instance, candidate, "candidate antes de chamar perturb");
         const set<int> removed = perturb(instance, candidate,
                                               options.perturbation_strength, rng);
         localSearch(instance, candidate, removed, evaluations);
         if (better(candidate, best)) best = candidate;
-        // Aceita melhora; a cada 20 iteracoes reinicia da melhor solucao.
+        // Aceita melhora; entre reinicios, aceita solucoes piores temporariamente.
         if (better(candidate, current)) current = candidate;
-        else if ((iterations + 1) % 20 == 0) current = best;
-        else current = candidate;  // caminhada permite atravessar otimos locais.
+        else if (options.reset_interval > 0 &&
+                 (iterations + 1) % options.reset_interval == 0) {
+            current = best;
+            ++resets;
+        } else current = candidate;
     }
     const double elapsed = chrono::duration<double>(
         chrono::steady_clock::now() - start).count();
-    return toSolution(instance, best, elapsed, evaluations, iterations);
+    return toSolution(instance, best, elapsed, evaluations, iterations, resets,
+                      options.reset_interval);
 }
 
 }  // namespace sopmv

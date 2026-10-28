@@ -35,6 +35,18 @@ target_include_directories(sopmv_ils PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src/il
 target_link_libraries(sopmv_ils PRIVATE sopmv_core)
 target_compile_options(sopmv_ils PRIVATE -Wall -Wextra -Wpedantic)
 
+add_executable(sopmv_ils_new_version
+    src/ils/main.cpp
+    src/ils/ils_new_version.cpp
+    src/greedy/greedy.cpp
+)
+target_include_directories(sopmv_ils_new_version PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/ils"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/greedy"
+)
+target_link_libraries(sopmv_ils_new_version PRIVATE sopmv_core)
+target_compile_options(sopmv_ils_new_version PRIVATE -Wall -Wextra -Wpedantic)
+
 # Versao didatica do ILS: mesma logica, mas com rastreamento detalhado no terminal.
 add_executable(sopmv_ils_trace src/ils/main.cpp src/ils/ils_trace.cpp src/greedy/greedy.cpp)
 target_include_directories(sopmv_ils_trace PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src/ils" "${CMAKE_CURRENT_SOURCE_DIR}/src/greedy")
@@ -123,6 +135,21 @@ if(BUILD_TESTING)
     target_link_libraries(test_ils PRIVATE sopmv_core)
     target_compile_definitions(test_ils PRIVATE TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
     add_test(NAME ils COMMAND test_ils)
+
+    add_executable(test_ils_acceptance
+        tests/test_ils_acceptance.cpp
+        src/ils/ils_new_version.cpp
+        src/greedy/greedy.cpp
+    )
+    target_include_directories(test_ils_acceptance PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/ils"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/greedy"
+    )
+    target_link_libraries(test_ils_acceptance PRIVATE sopmv_core)
+    target_compile_definitions(test_ils_acceptance PRIVATE
+        TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
+    )
+    add_test(NAME ils_acceptance COMMAND test_ils_acceptance)
 
     if(CPLEX_FOUND)
         add_executable(test_cplex_small tests/test_cplex_small.cpp)

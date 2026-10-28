@@ -28,6 +28,8 @@ void usage(const char* program) {
               << "  --mandatory-file ARQUIVO.mv\n"
               << "  --mandatory-sets \"ID ID ...\"\n"
               << "  --ils-iterations N       (padrao: 10000)\n"
+              << "  --ils-reset-interval N   (padrao: 0 = desativado)\n"
+              << "  --ils-no-improvement-limit N (padrao: 0 = desativado)\n"
               << "  --ils-perturbation N     (padrao: 2)\n"
               << "  --ils-time-limit SEGUNDOS (padrao: 10)\n"
               << "  --seed N                 (padrao: 202601)\n"
@@ -45,6 +47,12 @@ CliOptions parseOptions(int argc, char** argv) {
         else if (arg == "--mandatory-file") options.mandatory_path = value;
         else if (arg == "--mandatory-sets") options.mandatory_sets = value;
         else if (arg == "--ils-iterations") options.ils.max_iterations = std::stoi(value);
+        else if (arg == "--ils-reset-interval") {
+            options.ils.reset_interval = std::stoi(value);
+        }
+        else if (arg == "--ils-no-improvement-limit") {
+            options.ils.max_iterations_without_improvement = std::stoi(value);
+        }
         else if (arg == "--ils-perturbation") options.ils.perturbation_strength = std::stoi(value);
         else if (arg == "--ils-time-limit") options.ils.time_limit_seconds = std::stod(value);
         else if (arg == "--seed") options.ils.seed = static_cast<std::uint32_t>(std::stoul(value));
@@ -54,7 +62,10 @@ CliOptions parseOptions(int argc, char** argv) {
     if (options.instance_path.empty()) throw std::invalid_argument("--instance e obrigatorio");
     if (!options.mandatory_path.empty() && !options.mandatory_sets.empty())
         throw std::invalid_argument("use --mandatory-file ou --mandatory-sets, nao ambos");
-    if (options.ils.max_iterations < 0 || options.ils.perturbation_strength <= 0 ||
+    if (options.ils.max_iterations < 0 ||
+        options.ils.max_iterations_without_improvement < 0 ||
+        options.ils.reset_interval < 0 ||
+        options.ils.perturbation_strength <= 0 ||
         options.ils.time_limit_seconds < 0.0)
         throw std::invalid_argument("parametros do ILS devem ser nao negativos (perturbacao > 0)");
     return options;

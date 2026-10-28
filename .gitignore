@@ -6,6 +6,7 @@ CMakeFiles/
 compile_commands.json
 CTestTestfile.cmake
 Testing/
+tests/
 
 # Cobertura e saídas locais de testes
 *.gcda

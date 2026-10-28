@@ -129,6 +129,16 @@ def main() -> int:
         default=raiz / "data" / "berlin52",
         help="pasta que contem as tres pastas de destino",
     )
+    parser.add_argument(
+        "--pastas-saida",
+        nargs=3,
+        metavar=("PASTA_10", "PASTA_20", "PASTA_30"),
+        default=[PASTAS_PADRAO[percentual] for percentual in PERCENTUAIS],
+        help=(
+            "nomes das pastas para 10%%, 20%% e 30%%, respectivamente "
+            f"(padrao: {' '.join(PASTAS_PADRAO[percentual] for percentual in PERCENTUAIS)})"
+        ),
+    )
     parser.add_argument("--semente", type=int, default=202601)
     parser.add_argument("--sobrescrever", action="store_true")
     args = parser.parse_args()
@@ -143,8 +153,8 @@ def main() -> int:
         parser.error(f"nenhum arquivo .sop encontrado em {origem}")
 
     destinos = {
-        percentual: raiz_saida / PASTAS_PADRAO[percentual]
-        for percentual in PERCENTUAIS
+        percentual: raiz_saida / nome_pasta
+        for percentual, nome_pasta in zip(PERCENTUAIS, args.pastas_saida)
     }
     for pasta in destinos.values():
         pasta.mkdir(parents=True, exist_ok=True)

@@ -34,7 +34,21 @@ struct Insertion {
     double reward{};
 };
 
-vector<int> routeOf(const Instance& instance, const State& state);
+vector<int> routeOf(const Instance& instance, const State& state) {
+    vector<int> route{instance.depot_node_id};
+    route.insert(route.end(), state.representatives.begin(), state.representatives.end());
+    route.push_back(instance.depot_node_id);
+    return route;
+}
+
+double routeDistance(const Instance& instance, const State& state) {
+    const auto route = routeOf(instance, state);
+    double total = 0.0;
+    for (size_t i = 0; i + 1 < route.size(); ++i) {
+        total += instance.distanceById(route[i], route[i + 1]);
+    }
+    return total;
+}
 
 template <typename Range>
 void printRange(const char* name, const Range& values) {
@@ -64,22 +78,6 @@ void printState(const Instance& instance, const State& state, const char* title)
               << " tmax=" << instance.tmax << "\n";
 }
 
-vector<int> routeOf(const Instance& instance, const State& state) {
-    vector<int> route{instance.depot_node_id};
-    route.insert(route.end(), state.representatives.begin(), state.representatives.end());
-    route.push_back(instance.depot_node_id);
-    return route;
-}
-
-double routeDistance(const Instance& instance, const State& state) {
-    const auto route = routeOf(instance, state);
-    double total = 0.0;
-    for (size_t i = 0; i + 1 < route.size(); ++i) {
-        total += instance.distanceById(route[i], route[i + 1]);
-    }
-    return total;
-}
-
 void recompute(const Instance& instance, State& state) {
     state.distance = routeDistance(instance, state);
     state.reward = 0.0;
@@ -94,13 +92,9 @@ bool better(const State& lhs, const State& rhs) {
 
 void improveRepresentatives(const Instance& instance, State& state,
                             int64_t& evaluations) {
-    cout << "\n[BUSCA LOCAL / REPRESENTANTES] Mantem os clusters nas mesmas posicoes.\n";
     bool changed = true;
-    int pass = 0;
     while (changed) {
-        ++pass;
         changed = false;
-        cout << "  Passada " << pass << " pelos clusters:\n";
         for (size_t i = 0; i < state.sequence.size(); ++i) {
             const int previous = i == 0 ? instance.depot_node_id
                                         : state.representatives[i - 1];
@@ -109,38 +103,25 @@ void improveRepresentatives(const Instance& instance, State& state,
             int best_node = state.representatives[i];
             double best_cost = instance.distanceById(previous, best_node) +
                                instance.distanceById(best_node, next);
-            cout << "    indice=" << i << " cluster=" << state.sequence[i]
-                      << " representante_atual=" << best_node
-                      << " vizinhos=(" << previous << ", " << next << ")"
-                      << " custo_atual=" << best_cost << "\n";
             for (int node : instance.clusterById(state.sequence[i]).node_ids) {
                 ++evaluations;
                 const double cost = instance.distanceById(previous, node) +
                                     instance.distanceById(node, next);
-                cout << "      testa no=" << node << " custo=" << cost;
                 if (cost + kTolerance < best_cost) {
-                    cout << " -> novo melhor";
                     best_cost = cost;
                     best_node = node;
                 }
-                cout << "\n";
             }
             if (best_node != state.representatives[i]) {
-                cout << "    TROCA no indice " << i << ": no "
-                          << state.representatives[i] << " -> no " << best_node << "\n";
                 state.representatives[i] = best_node;
                 changed = true;
-            } else {
-                cout << "    MANTEM no " << best_node << "\n";
             }
         }
     }
     state.distance = routeDistance(instance, state);
-    printState(instance, state, "depois de melhorar representantes");
 }
 
 void improveTwoOpt(const Instance& instance, State& state, int64_t& evaluations) {
-    cout << "\n[BUSCA LOCAL / 2-OPT] Procura um trecho cuja inversao diminui a distancia.\n";
     bool changed = true;
     while (changed && state.sequence.size() >= 2) {
         changed = false;
@@ -155,9 +136,6 @@ void improveTwoOpt(const Instance& instance, State& state, int64_t& evaluations)
                 const double new_edges = instance.distanceById(route[first - 1], route[last]) +
                                          instance.distanceById(route[first], route[last + 1]);
                 const double gain = old_edges - new_edges;
-                cout << "    testa route[first=" << first << "] ate route[last=" << last
-                          << "]: arestas_antigas=" << old_edges
-                          << " arestas_novas=" << new_edges << " ganho=" << gain << "\n";
                 if (gain > best_gain + kTolerance) {
                     best_gain = gain;
                     best_first = first;
@@ -166,20 +144,11 @@ void improveTwoOpt(const Instance& instance, State& state, int64_t& evaluations)
             }
         }
         if (best_gain > kTolerance) {
-            cout << "  MELHOR INVERSAO: indices de sequence " << best_first - 1
-                      << " ate " << best_last - 1 << " (inclusive), ganho=" << best_gain << "\n"
-                      << "  No codigo, reverse recebe begin()+" << best_first - 1
-                      << " e begin()+" << best_last
-                      << ". O segundo limite NAO entra na inversao.\n";
-            printState(instance, state, "antes do reverse do 2-opt");
             reverse(state.sequence.begin() + static_cast<ptrdiff_t>(best_first - 1),
                          state.sequence.begin() + static_cast<ptrdiff_t>(best_last));
             reverse(state.representatives.begin() + static_cast<ptrdiff_t>(best_first - 1),
                          state.representatives.begin() + static_cast<ptrdiff_t>(best_last));
             changed = true;
-            printState(instance, state, "depois do reverse do 2-opt");
-        } else {
-            cout << "  Nenhuma inversao com ganho positivo foi encontrada.\n";
         }
     }
     state.distance = routeDistance(instance, state);
@@ -187,69 +156,33 @@ void improveTwoOpt(const Instance& instance, State& state, int64_t& evaluations)
 
 Insertion bestInsertion(const Instance& instance, const State& state,
                         const set<int>& excluded, int64_t& evaluations) {
-    cout << "\n[BUSCA LOCAL / MELHOR INSERCAO]\n";
     const auto route = routeOf(instance, state);
     set<int> served(state.sequence.begin(), state.sequence.end());
-    printRange("clusters ja atendidos", served);
-    printRange("clusters temporariamente excluidos", excluded);
-    printRange("rota usada para testar insercoes", route);
     Insertion best;
     double best_ratio = -1.0;
     for (const Cluster& cluster : instance.clusters) {
-        if (cluster.id == instance.depot_cluster_id) {
-            cout << "  pula cluster " << cluster.id << ": e o deposito\n";
-            continue;
-        }
-        if (served.count(cluster.id)) {
-            cout << "  pula cluster " << cluster.id << ": ja esta na sequence\n";
-            continue;
-        }
-        if (excluded.count(cluster.id)) {
-            cout << "  pula cluster " << cluster.id << ": foi removido pela perturbacao\n";
-            continue;
-        }
-        cout << "  considera cluster=" << cluster.id << " recompensa=" << cluster.reward << "\n";
+        if (cluster.id == instance.depot_cluster_id || served.count(cluster.id) ||
+            excluded.count(cluster.id)) continue;
         for (int node : cluster.node_ids) {
             for (size_t position = 0; position + 1 < route.size(); ++position) {
                 ++evaluations;
                 const double delta = instance.distanceById(route[position], node) +
                                      instance.distanceById(node, route[position + 1]) -
                                      instance.distanceById(route[position], route[position + 1]);
-                cout << "    no=" << node << " posicao=" << position
-                          << " (entre " << route[position] << " e " << route[position + 1]
-                          << ") delta=" << delta << " nova_distancia=" << state.distance + delta;
-                if (state.distance + delta > instance.tmax + kTolerance) {
-                    cout << " -> inviavel: ultrapassa tmax\n";
-                    continue;
-                }
+                if (state.distance + delta > instance.tmax + kTolerance) continue;
                 const double ratio = cluster.reward / max(delta, kTolerance);
-                cout << " razao=" << ratio;
                 if (!best.found || ratio > best_ratio + kTolerance ||
                     (fabs(ratio - best_ratio) <= kTolerance && cluster.reward > best.reward)) {
-                    cout << " -> NOVA MELHOR INSERCAO";
                     best = {true, cluster.id, node, position, delta, cluster.reward};
                     best_ratio = ratio;
                 }
-                cout << "\n";
             }
         }
-    }
-    if (best.found) {
-        cout << "  ESCOLHIDA: cluster=" << best.cluster << " no=" << best.node
-                  << " posicao=" << best.position << " delta=" << best.delta << "\n";
-    } else {
-        cout << "  RESULTADO: nenhuma insercao viavel.\n";
     }
     return best;
 }
 
 void insert(State& state, const Insertion& move) {
-    cout << "\n[INSERT] position=" << move.position
-              << " significa inserir ANTES do elemento que atualmente ocupa esse indice.\n"
-              << "  begin() aponta para o primeiro elemento; begin()+position aponta para a posicao "
-              << move.position << ".\n"
-              << "  static_cast<ptrdiff_t> apenas converte o tipo numerico do indice para o tipo"
-                 " aceito pela aritmetica do iterador.\n";
     state.sequence.insert(state.sequence.begin() + static_cast<ptrdiff_t>(move.position),
                           move.cluster);
     state.representatives.insert(
@@ -260,44 +193,28 @@ void insert(State& state, const Insertion& move) {
 
 void localSearch(const Instance& instance, State& state, const set<int>& initially_excluded,
                  int64_t& evaluations) {
-    cout << "[TRACE] busca local: inicio clusters=" << state.sequence.size()
-              << " recompensa=" << state.reward << " distancia=" << state.distance << "\n";
-    printState(instance, state, "entrada da busca local");
     improveRepresentatives(instance, state, evaluations);
     improveTwoOpt(instance, state, evaluations);
     // Na primeira insercao, evita desfazer imediatamente a perturbacao.
     set<int> excluded = initially_excluded;
-    printRange("excluded recebido de perturb", excluded);
     bool first = true;
     while (true) {
         const Insertion move = bestInsertion(instance, state, excluded, evaluations);
         if (!move.found) {
             if (first && !excluded.empty()) {
-                cout << "\n[BUSCA LOCAL] Nao achou insercao sem os removidos."
-                             " Limpa excluded e tenta novamente.\n";
                 excluded.clear();
                 first = false;
                 continue;
             }
-            cout << "\n[BUSCA LOCAL] Nao ha mais insercao viavel. Encerra o while.\n";
             break;
         }
-        printState(instance, state, "imediatamente antes de insert");
         insert(state, move);
-        cout << "[TRACE] busca local: inseriu cluster=" << move.cluster
-                  << " no=" << move.node << " delta=" << move.delta
-                  << " recompensa=" << state.reward << "\n";
-        printState(instance, state, "imediatamente depois de insert");
-        cout << "[BUSCA LOCAL] Depois da primeira insercao, os removidos deixam de estar"
-                     " bloqueados.\n";
         excluded.clear();
         first = false;
         improveRepresentatives(instance, state, evaluations);
         improveTwoOpt(instance, state, evaluations);
     }
     recompute(instance, state);
-    cout << "[TRACE] busca local: fim clusters=" << state.sequence.size()
-              << " recompensa=" << state.reward << " distancia=" << state.distance << "\n";
 }
 
 set<int> perturb(const Instance& instance, State& state, int strength,
@@ -327,6 +244,7 @@ set<int> perturb(const Instance& instance, State& state, int strength,
     sort(removable.rbegin(), removable.rend());
     printRange("removable em ordem decrescente", removable);
     set<int> removed;
+    printRange("removed logo apos a declaracao (ainda vazio)", removed);
     for (size_t index : removable) {
         cout << "\n  ERASE indice=" << index << ": remove cluster=" << state.sequence[index]
                   << " e seu no representante=" << state.representatives[index] << "\n"
@@ -410,6 +328,7 @@ Solution solveILS(const Instance& instance, const ILSOptions& options) {
             chrono::steady_clock::now() - start).count();
         if (options.time_limit_seconds > 0.0 && elapsed >= options.time_limit_seconds) break;
         State candidate = current;
+        printState(instance, candidate, "candidate antes de chamar perturb");
         cout << "[TRACE] iteracao " << iterations + 1 << ": comeca current reward="
                   << current.reward << " distance=" << current.distance << "\n";
         const set<int> removed = perturb(instance, candidate,
@@ -429,3 +348,4 @@ Solution solveILS(const Instance& instance, const ILSOptions& options) {
 }
 
 }  // namespace sopmv
+

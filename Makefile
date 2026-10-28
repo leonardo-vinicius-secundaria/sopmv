@@ -19,8 +19,8 @@ CPLEX_LDLIBS := -L$(CPLEX_LIB_DIR) -lilocplex -lcplex \
 	-L$(CONCERT_LIB_DIR) -lconcert -lpthread -ldl -lm
 
 CORE_TARGETS := $(BIN_DIR)/generate_sopmv $(BIN_DIR)/sopmv_sa $(BIN_DIR)/sopmv_greedy \
-	$(BIN_DIR)/sopmv_ils $(BIN_DIR)/test_parser $(BIN_DIR)/test_small_instance \
-	$(BIN_DIR)/test_greedy $(BIN_DIR)/test_ils
+	$(BIN_DIR)/sopmv_ils $(BIN_DIR)/sopmv_ils_new_version $(BIN_DIR)/test_parser $(BIN_DIR)/test_small_instance \
+	$(BIN_DIR)/test_greedy $(BIN_DIR)/test_ils $(BIN_DIR)/test_ils_acceptance
 ifeq ($(strip $(CPLEX_ROOT_DIR)),)
 ALL_TARGETS := $(CORE_TARGETS)
 else
@@ -48,6 +48,9 @@ $(BIN_DIR)/sopmv_greedy: src/greedy/main.cpp src/greedy/greedy.cpp $(CORE_SOURCE
 $(BIN_DIR)/sopmv_ils: src/ils/main.cpp src/ils/ils.cpp src/greedy/greedy.cpp $(CORE_SOURCES) | $(BIN_DIR)
 	$(CXX) $(STD) $(CXXFLAGS) $(WARNINGS) $(CPPFLAGS) -Isrc/ils -Isrc/greedy $^ -o $@
 
+$(BIN_DIR)/sopmv_ils_new_version: src/ils/main.cpp src/ils/ils_new_version.cpp src/greedy/greedy.cpp $(CORE_SOURCES) | $(BIN_DIR)
+	$(CXX) $(STD) $(CXXFLAGS) $(WARNINGS) $(CPPFLAGS) -Isrc/ils -Isrc/greedy $^ -o $@
+
 $(BIN_DIR)/test_parser: tests/test_parser.cpp $(CORE_SOURCES) | $(BIN_DIR)
 	$(CXX) $(STD) $(CXXFLAGS) $(WARNINGS) $(CPPFLAGS) $(TEST_DEFINE) $^ -o $@
 
@@ -58,6 +61,9 @@ $(BIN_DIR)/test_greedy: tests/test_greedy.cpp src/greedy/greedy.cpp $(CORE_SOURC
 	$(CXX) $(STD) $(CXXFLAGS) $(WARNINGS) $(CPPFLAGS) -Isrc/greedy $(TEST_DEFINE) $^ -o $@
 
 $(BIN_DIR)/test_ils: tests/test_ils.cpp src/ils/ils.cpp src/greedy/greedy.cpp $(CORE_SOURCES) | $(BIN_DIR)
+	$(CXX) $(STD) $(CXXFLAGS) $(WARNINGS) $(CPPFLAGS) -Isrc/ils -Isrc/greedy $(TEST_DEFINE) $^ -o $@
+
+$(BIN_DIR)/test_ils_acceptance: tests/test_ils_acceptance.cpp src/ils/ils_new_version.cpp src/greedy/greedy.cpp $(CORE_SOURCES) | $(BIN_DIR)
 	$(CXX) $(STD) $(CXXFLAGS) $(WARNINGS) $(CPPFLAGS) -Isrc/ils -Isrc/greedy $(TEST_DEFINE) $^ -o $@
 
 check-cplex:
@@ -86,6 +92,7 @@ test: all
 	$(BIN_DIR)/test_small_instance
 	$(BIN_DIR)/test_greedy
 	$(BIN_DIR)/test_ils
+	$(BIN_DIR)/test_ils_acceptance
 ifneq ($(strip $(CPLEX_ROOT_DIR)),)
 	$(BIN_DIR)/test_cplex_small
 	$(BIN_DIR)/test_cplex_berlin
