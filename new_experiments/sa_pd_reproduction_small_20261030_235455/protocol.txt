@@ -1,0 +1,6 @@
+mode=small
+runs=10
+T0=16
+alpha=0.93
+iterations_per_temperature=80000
+time_multiplier=0.2

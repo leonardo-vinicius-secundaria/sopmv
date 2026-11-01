@@ -1,0 +1,2 @@
+instance,variant,mandatory_ratio,mandatory_sets,status,solver_status,objective,best_bound,gap,elapsed_seconds,tree_nodes,total_distance,tmax,route,visited_nodes,served_sets,mandatory_satisfied,solution_valid,validation_message
+"14st70_T80_p1",SOP,0,"",Feasible,"SA_PD",61,,,2.800002704,497357,251,252,"1;52;12;17;43;44;19;2;59;69;47;23;1","1;2;12;17;19;23;43;44;47;52;59;69","2;5;6;7;8;9;10;11;12;13;14",true,true,"solucao valida"

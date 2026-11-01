@@ -1,0 +1,1 @@
+VALIDO reward=47 distance=3076 budget=3232 mandatory=1,10

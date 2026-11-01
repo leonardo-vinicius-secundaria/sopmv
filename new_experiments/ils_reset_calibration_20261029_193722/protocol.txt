@@ -1,0 +1,5 @@
+Calibracao unifatorial do ILS.
+Fator: reset_interval N = 10, 20, 30, 40.
+Sementes: 202601--202605.
+Orcamento por execucao: ceil(1.5 * Nsets) segundos.
+Selecao: menor RPD medio por instancia-semente; desempate por mediana, vitorias e distancia.

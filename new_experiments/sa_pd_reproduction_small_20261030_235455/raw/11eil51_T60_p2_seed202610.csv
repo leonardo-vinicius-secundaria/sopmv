@@ -1,0 +1,2 @@
+instance,variant,mandatory_ratio,mandatory_sets,status,solver_status,objective,best_bound,gap,elapsed_seconds,tree_nodes,total_distance,tmax,route,visited_nodes,served_sets,mandatory_satisfied,solution_valid,validation_message
+"11eil51_T60_p2",SOP,0,"",Feasible,"SA_PD",1911,,,2.200002123,529839,102,104,"1;6;18;4;12;38;2;22;1","1;2;4;6;12;18;22;38","5;6;7;8;9;10;11",true,true,"solucao valida"

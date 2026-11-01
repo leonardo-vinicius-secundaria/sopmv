@@ -1,0 +1,7 @@
+mode=large-hard-continuation
+runs=10
+T0=16
+alpha=0.93
+iterations_per_temperature=80000
+time_multiplier=1.5
+source_experiment=/home/leo/tcc_sopmv/new_experiments/sa_pd_reproduction_large-hard_20261031_000511

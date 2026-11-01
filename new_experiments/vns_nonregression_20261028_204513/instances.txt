@@ -1,0 +1,9 @@
+/home/leo/tcc_sopmv/data/instancias_pequenas/sop/11berlin52_T40_p1.sop
+/home/leo/tcc_sopmv/data/instancias_pequenas/sop/11berlin52_T60_p1.sop
+/home/leo/tcc_sopmv/data/instancias_pequenas/sop/11berlin52_T80_p1.sop
+/home/leo/tcc_sopmv/data/instancias_pequenas/sop/11berlin52_T40_p2.sop
+/home/leo/tcc_sopmv/data/instancias_pequenas/sop/11berlin52_T60_p2.sop
+/home/leo/tcc_sopmv/data/instancias_pequenas/sop/11berlin52_T80_p2.sop
+/home/leo/tcc_sopmv/data/intancias_grandes/sop/80rd400_T80_p1.sop
+/home/leo/tcc_sopmv/data/intancias_grandes/sop/145u724_T80_p1.sop
+/home/leo/tcc_sopmv/data/intancias_grandes/sop/217vm1084_T80_p1.sop

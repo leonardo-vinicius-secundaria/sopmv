@@ -1,0 +1,6 @@
+time_limit_seconds=3600
+threads=1
+mip_gap=0
+seed=202601
+solver=branch_and_cut
+purpose=resolve_sopmv_instances_without_incumbent_at_600s

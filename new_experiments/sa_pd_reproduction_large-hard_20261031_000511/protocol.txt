@@ -1,0 +1,6 @@
+mode=large-hard
+runs=10
+T0=16
+alpha=0.93
+iterations_per_temperature=80000
+time_multiplier=1.5

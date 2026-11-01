@@ -1,0 +1,5 @@
+time_limit_seconds=600
+threads=1
+mip_gap=0
+seed=202601
+solver=branch_and_cut

@@ -1,0 +1,3 @@
+instance,seed,sets,time_limit_seconds,reward,distance,iterations,validation
+212u1060_T80_p1,202601,213,320,960,84559,2149,"VALIDO reward=960 distance=84559 budget=84805 mandatory="
+217vm1084_T80_p1,202601,218,327,965,104211,1979,"VALIDO reward=965 distance=104211 budget=104563 mandatory="

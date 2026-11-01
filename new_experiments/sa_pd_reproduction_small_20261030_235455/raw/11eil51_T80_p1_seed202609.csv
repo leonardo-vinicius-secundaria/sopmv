@@ -1,0 +1,2 @@
+instance,variant,mandatory_ratio,mandatory_sets,status,solver_status,objective,best_bound,gap,elapsed_seconds,tree_nodes,total_distance,tmax,route,visited_nodes,served_sets,mandatory_satisfied,solution_valid,validation_message
+"11eil51_T80_p1",SOP,0,"",Feasible,"SA_PD",43,,,2.200003395,542354,121,139,"1;22;3;2;11;5;4;18;6;1","1;2;3;4;5;6;11;18;22","2;5;6;7;8;9;10;11",true,true,"solucao valida"

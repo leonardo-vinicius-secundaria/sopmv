@@ -1,0 +1,3 @@
+seed=202601
+solver_budget_seconds=3130
+selected_instances=31
