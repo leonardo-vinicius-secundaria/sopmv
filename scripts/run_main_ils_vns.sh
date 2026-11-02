@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Benchmark principal ILS (N=40) x VNS adaptado, com orcamento igual por relogio.
-# Uso: ./scripts/run_main_ils_vns.sh {sop-small|sop-large-pilot|sop-large-batch2|sop-large-hard|sopmv-small}
+# Uso: ./scripts/run_main_ils_vns.sh {sop-small|sop-large-pilot|sop-large-batch2|sop-large-remaining|sop-large-hard|sopmv-small|sopmv-large-pilot|sopmv-large-batch1..6}
 set -euo pipefail
 
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
@@ -9,8 +9,8 @@ VNS_BIN=${VNS_BIN:-"$ROOT/build/vns_sop_adapted/sources/sop_vns"}
 STAGE=${1:-}
 SEEDS=(202601 202602 202603 202604 202605 202606 202607 202608 202609 202610)
 
-[[ "$STAGE" =~ ^(sop-small|sop-large-pilot|sop-large-batch2|sop-large-hard|sopmv-small)$ ]] || {
-  echo "Uso: $0 {sop-small|sop-large-pilot|sop-large-batch2|sop-large-hard|sopmv-small}" >&2; exit 2; }
+[[ "$STAGE" =~ ^(sop-small|sop-large-pilot|sop-large-batch2|sop-large-remaining|sop-large-hard|sopmv-small|sopmv-large-pilot|sopmv-large-batch[1-6])$ ]] || {
+  echo "Uso: $0 {sop-small|sop-large-pilot|sop-large-batch2|sop-large-remaining|sop-large-hard|sopmv-small|sopmv-large-pilot|sopmv-large-batch1..6}" >&2; exit 2; }
 [[ -x "$ILS_BIN" && -x "$VNS_BIN" ]] || { echo "ILS ou VNS adaptado nao compilado" >&2; exit 2; }
 
 STAMP=$(date +%Y%m%d_%H%M%S)
@@ -54,6 +54,20 @@ case "$STAGE" in
       [[ -f "$instance" ]] || { echo "Instancia ausente: $instance" >&2; exit 2; }
     done
     ;;
+  sop-large-remaining)
+    # Perfis T100 ainda nao executados entre as 14 familias grandes hard.
+    # E disjunto de sop-large-pilot e sop-large-batch2.
+    for family in 84fl417 89pcb442 99d493 131p654 132d657 201pr1002; do
+      INSTANCES+=(
+        "$ROOT/data/intancias_grandes/sop/${family}_T100_p1.sop"
+        "$ROOT/data/intancias_grandes/sop/${family}_T100_p2.sop"
+      )
+    done
+    [[ ${#INSTANCES[@]} -eq 12 ]] || { echo "Esperava 12 perfis SOP restantes" >&2; exit 2; }
+    for instance in "${INSTANCES[@]}"; do
+      [[ -f "$instance" ]] || { echo "Instancia ausente: $instance" >&2; exit 2; }
+    done
+    ;;
   sop-large-hard)
     mapfile -t INSTANCES < <(
       for instance in "$ROOT"/data/intancias_grandes/sop/*_T100_p[12].sop; do
@@ -78,6 +92,47 @@ case "$STAGE" in
       [[ -n ${CPLEX_FEASIBLE["$name"]+x} ]] && INSTANCES+=("$instance")
     done < <(find "$ROOT/data/instancias_pequenas" -mindepth 2 -maxdepth 2 -type f -path '*/sopmv_*/*.sop' | sort)
     [[ ${#INSTANCES[@]} -eq 38 ]] || { echo "Esperava 38 SOPMV pequenas viaveis; encontrei ${#INSTANCES[@]}" >&2; exit 2; }
+    ;;
+  sopmv-large-pilot)
+    # Duas familias de extremos de porte, p1/p2 e tres percentuais obrigatorios.
+    # As mesmas familias ja apareceram no piloto SOP, permitindo leitura direta
+    # do impacto dos conjuntos obrigatorios. Resultados sem rota sao registrados.
+    for mandatory_ratio in 10 20 30; do
+      for family in 80rd400 217vm1084; do
+        INSTANCES+=(
+          "$ROOT/data/intancias_grandes/sopmv${mandatory_ratio}/${family}_T100_p1.sop"
+          "$ROOT/data/intancias_grandes/sopmv${mandatory_ratio}/${family}_T100_p2.sop"
+        )
+      done
+    done
+    [[ ${#INSTANCES[@]} -eq 12 ]] || { echo "Esperava 12 perfis SOPMV grandes do piloto" >&2; exit 2; }
+    for instance in "${INSTANCES[@]}"; do
+      [[ -f "$instance" ]] || { echo "Instancia ausente: $instance" >&2; exit 2; }
+    done
+    ;;
+  sopmv-large-batch1|sopmv-large-batch2|sopmv-large-batch3|sopmv-large-batch4|sopmv-large-batch5|sopmv-large-batch6)
+    # Blocos disjuntos de duas familias. Juntos, com o piloto, cobrem as
+    # 14 familias grandes hard em p1/p2 e SOPMV10/20/30.
+    case "$STAGE" in
+      sopmv-large-batch1) FAMILIES=(84fl417 201pr1002) ;;
+      sopmv-large-batch2) FAMILIES=(88pr439 212u1060) ;;
+      sopmv-large-batch3) FAMILIES=(89pcb442 157rat783) ;;
+      sopmv-large-batch4) FAMILIES=(99d493 145u724) ;;
+      sopmv-large-batch5) FAMILIES=(115rat575 132d657) ;;
+      sopmv-large-batch6) FAMILIES=(115u574 131p654) ;;
+    esac
+    for mandatory_ratio in 10 20 30; do
+      for family in "${FAMILIES[@]}"; do
+        INSTANCES+=(
+          "$ROOT/data/intancias_grandes/sopmv${mandatory_ratio}/${family}_T100_p1.sop"
+          "$ROOT/data/intancias_grandes/sopmv${mandatory_ratio}/${family}_T100_p2.sop"
+        )
+      done
+    done
+    [[ ${#INSTANCES[@]} -eq 12 ]] || { echo "Esperava 12 perfis SOPMV no lote" >&2; exit 2; }
+    for instance in "${INSTANCES[@]}"; do
+      [[ -f "$instance" ]] || { echo "Instancia ausente: $instance" >&2; exit 2; }
+    done
     ;;
 esac
 
