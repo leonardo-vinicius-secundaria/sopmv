@@ -1,0 +1,2 @@
+instance,variant,mandatory_ratio,mandatory_sets,status,solver_status,objective,best_bound,gap,elapsed_seconds,tree_nodes,total_distance,tmax,route,visited_nodes,served_sets,mandatory_satisfied,solution_valid,validation_message
+"11eil51_T80_p2_MV20",SOPMV,0.181818181818182,"7;8",Feasible,"ILS iterations=1138871 iterations_without_improvement=1138868 resets=15882 reset_interval=40",2114,,,17.000004441,609612000,126,139,"1;6;18;41;17;5;11;2;22;1","1;2;5;6;11;17;18;22;41","1;5;6;7;8;9;10;11",true,true,"solucao valida"

@@ -1,0 +1,9 @@
+instance,instance_path,variant,sets_without_depot,time_limit_seconds
+80rd400_T100_p1,/home/leo/tcc_sopmv/data/intancias_grandes/sop/80rd400_T100_p1.sop,sop,80,120
+80rd400_T100_p2,/home/leo/tcc_sopmv/data/intancias_grandes/sop/80rd400_T100_p2.sop,sop,80,120
+115u574_T100_p1,/home/leo/tcc_sopmv/data/intancias_grandes/sop/115u574_T100_p1.sop,sop,115,173
+115u574_T100_p2,/home/leo/tcc_sopmv/data/intancias_grandes/sop/115u574_T100_p2.sop,sop,115,173
+145u724_T100_p1,/home/leo/tcc_sopmv/data/intancias_grandes/sop/145u724_T100_p1.sop,sop,144,216
+145u724_T100_p2,/home/leo/tcc_sopmv/data/intancias_grandes/sop/145u724_T100_p2.sop,sop,144,216
+217vm1084_T100_p1,/home/leo/tcc_sopmv/data/intancias_grandes/sop/217vm1084_T100_p1.sop,sop,217,326
+217vm1084_T100_p2,/home/leo/tcc_sopmv/data/intancias_grandes/sop/217vm1084_T100_p2.sop,sop,217,326
