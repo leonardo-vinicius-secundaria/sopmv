@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Benchmark principal ILS (N=40) x VNS adaptado, com orcamento igual por relogio.
-# Uso: ./scripts/run_main_ils_vns.sh {sop-small|sop-large-pilot|sop-large-hard|sopmv-small}
+# Uso: ./scripts/run_main_ils_vns.sh {sop-small|sop-large-pilot|sop-large-batch2|sop-large-hard|sopmv-small}
 set -euo pipefail
 
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
@@ -9,8 +9,8 @@ VNS_BIN=${VNS_BIN:-"$ROOT/build/vns_sop_adapted/sources/sop_vns"}
 STAGE=${1:-}
 SEEDS=(202601 202602 202603 202604 202605 202606 202607 202608 202609 202610)
 
-[[ "$STAGE" =~ ^(sop-small|sop-large-pilot|sop-large-hard|sopmv-small)$ ]] || {
-  echo "Uso: $0 {sop-small|sop-large-pilot|sop-large-hard|sopmv-small}" >&2; exit 2; }
+[[ "$STAGE" =~ ^(sop-small|sop-large-pilot|sop-large-batch2|sop-large-hard|sopmv-small)$ ]] || {
+  echo "Uso: $0 {sop-small|sop-large-pilot|sop-large-batch2|sop-large-hard|sopmv-small}" >&2; exit 2; }
 [[ -x "$ILS_BIN" && -x "$VNS_BIN" ]] || { echo "ILS ou VNS adaptado nao compilado" >&2; exit 2; }
 
 STAMP=$(date +%Y%m%d_%H%M%S)
@@ -37,6 +37,19 @@ case "$STAGE" in
       )
     done
     [[ ${#INSTANCES[@]} -eq 8 ]] || { echo "Esperava 8 perfis SOP do piloto" >&2; exit 2; }
+    for instance in "${INSTANCES[@]}"; do
+      [[ -f "$instance" ]] || { echo "Instancia ausente: $instance" >&2; exit 2; }
+    done
+    ;;
+  sop-large-batch2)
+    # Segundo lote, disjunto do piloto: quatro familias adicionais e tamanhos variados.
+    for family in 88pr439 115rat575 157rat783 212u1060; do
+      INSTANCES+=(
+        "$ROOT/data/intancias_grandes/sop/${family}_T100_p1.sop"
+        "$ROOT/data/intancias_grandes/sop/${family}_T100_p2.sop"
+      )
+    done
+    [[ ${#INSTANCES[@]} -eq 8 ]] || { echo "Esperava 8 perfis SOP do segundo lote" >&2; exit 2; }
     for instance in "${INSTANCES[@]}"; do
       [[ -f "$instance" ]] || { echo "Instancia ausente: $instance" >&2; exit 2; }
     done
