@@ -1,0 +1,13 @@
+instance,instance_path,variant,sets_without_depot,time_limit_seconds
+115rat575_T100_p1_MV10,/home/leo/tcc_sopmv/data/intancias_grandes/sopmv10/115rat575_T100_p1.sop,sopmv10,115,173
+115rat575_T100_p2_MV10,/home/leo/tcc_sopmv/data/intancias_grandes/sopmv10/115rat575_T100_p2.sop,sopmv10,115,173
+132d657_T100_p1_MV10,/home/leo/tcc_sopmv/data/intancias_grandes/sopmv10/132d657_T100_p1.sop,sopmv10,131,197
+132d657_T100_p2_MV10,/home/leo/tcc_sopmv/data/intancias_grandes/sopmv10/132d657_T100_p2.sop,sopmv10,131,197
+115rat575_T100_p1_MV20,/home/leo/tcc_sopmv/data/intancias_grandes/sopmv20/115rat575_T100_p1.sop,sopmv20,115,173
+115rat575_T100_p2_MV20,/home/leo/tcc_sopmv/data/intancias_grandes/sopmv20/115rat575_T100_p2.sop,sopmv20,115,173
+132d657_T100_p1_MV20,/home/leo/tcc_sopmv/data/intancias_grandes/sopmv20/132d657_T100_p1.sop,sopmv20,131,197
+132d657_T100_p2_MV20,/home/leo/tcc_sopmv/data/intancias_grandes/sopmv20/132d657_T100_p2.sop,sopmv20,131,197
+115rat575_T100_p1_MV30,/home/leo/tcc_sopmv/data/intancias_grandes/sopmv30/115rat575_T100_p1.sop,sopmv30,115,173
+115rat575_T100_p2_MV30,/home/leo/tcc_sopmv/data/intancias_grandes/sopmv30/115rat575_T100_p2.sop,sopmv30,115,173
+132d657_T100_p1_MV30,/home/leo/tcc_sopmv/data/intancias_grandes/sopmv30/132d657_T100_p1.sop,sopmv30,131,197
+132d657_T100_p2_MV30,/home/leo/tcc_sopmv/data/intancias_grandes/sopmv30/132d657_T100_p2.sop,sopmv30,131,197
