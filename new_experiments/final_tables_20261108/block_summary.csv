@@ -1,0 +1,5 @@
+block,profiles,pairs,ils_seed_wins,seed_ties,vns_seed_wins,ils_mean_rpd_percent,vns_mean_rpd_percent,ils_valid_runs,vns_valid_runs
+sop_small,20,200,0,200,0,0.0,0.0,200,200
+sop_large,28,280,202,58,20,0.0343747442277087,0.6368492721094129,280,280
+sopmv_small,38,380,0,380,0,0.0,0.0,380,380
+sopmv_large,84,840,599,189,52,0.02274334321597573,0.47515723550561817,840,840

@@ -1,0 +1,7 @@
+file,purpose
+block_summary.csv,"Resumo por bloco: pares, vitorias/empates/derrotas, RPD e validade."
+*_by_instance.csv,"Tabela por instancia/perfil: media, mediana, desvio, melhor, pior, RPD e validade."
+paired_seed_results.csv,Dados pareados por semente; base para Wilcoxon e graficos.
+ils_sop_by_instance.csv,"Resultados somente do ILS em SOP, agregados por instancia/perfil."
+ils_sop_all_runs.csv,"Resultados somente do ILS em SOP, uma linha por semente."
+sop_large_tms_2026_comparison_template.csv,"Modelo alinhado ao TMS 2026: fb, fbest, Dev.(%), favg e t(s)."
