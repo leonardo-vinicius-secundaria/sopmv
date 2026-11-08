@@ -8,6 +8,10 @@ CTestTestfile.cmake
 Testing/
 tests/
 
+#pdf livros
+sop tms 2026.pdf
+resultados_sop_2026_tms.pdf
+
 # Cobertura e saídas locais de testes
 *.gcda
 *.gcno
