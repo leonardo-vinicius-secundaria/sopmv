@@ -15,6 +15,12 @@ tests/
 coverage/
 test-results/
 
+# arquivos de overleaf
+capitulos_iniciais.tex
+referencias.bib
+tabela6_piloto_ils_vns_sop_grande.tex
+tabelas_resultados_preliminares.tex
+
 # Caches e ambientes Python
 __pycache__/
 *.py[cod]
