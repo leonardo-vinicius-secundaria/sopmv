@@ -1,0 +1,7 @@
+stage=sop-large-remaining
+algorithms=ILS_N40,VNS_adapted
+seeds=202601 202602 202603 202604 202605 202606 202607 202608 202609 202610
+time_budget=ceil(1.5*Nset_without_depot)
+ils_reset_interval=40
+ils_no_improvement_limit=0
+vns_time_only_stop=1

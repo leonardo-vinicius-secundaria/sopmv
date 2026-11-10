@@ -1,0 +1,4 @@
+mandatory_percent,profiles,pairs,ils_seed_wins,seed_ties,vns_seed_wins,ils_profile_wins,profile_ties,vns_profile_wins,ils_mean_rpd_percent,vns_mean_rpd_percent,ils_valid_runs,vns_valid_runs
+10,28,280,211,53,16,25,2,1,0.0204278975845407,0.46447604567568695,280,280
+20,28,280,204,62,14,25,2,1,0.018742986017627597,0.433443995195789,280,280
+30,28,280,184,74,22,23,2,3,0.029059146045758887,0.5275516656453785,280,280

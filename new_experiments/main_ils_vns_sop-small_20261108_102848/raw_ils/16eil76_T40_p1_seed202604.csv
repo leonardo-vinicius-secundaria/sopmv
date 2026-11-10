@@ -1,0 +1,2 @@
+instance,variant,mandatory_ratio,mandatory_sets,status,solver_status,objective,best_bound,gap,elapsed_seconds,tree_nodes,total_distance,tmax,route,visited_nodes,served_sets,mandatory_satisfied,solution_valid,validation_message
+"16eil76_T40_p1",SOP,0,"",Feasible,"ILS iterations=1057324 iterations_without_improvement=1057284 resets=15414 reset_interval=40",40,,,24.000007867,990804973,82,83,"1;62;28;6;17;3;16;1","1;3;6;16;17;28;62","5;7;8;10;11;16",true,true,"solucao valida"

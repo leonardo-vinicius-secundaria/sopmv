@@ -1,0 +1,11 @@
+article_table=6
+problem=SOP
+omega=1.0
+file_pattern=T100
+mode=hard
+runs=10
+T0=16
+alpha=0.93
+iterations_per_temperature=80000
+time_multiplier=1.5
+local_profiles=28
