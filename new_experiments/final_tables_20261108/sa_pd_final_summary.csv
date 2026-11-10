@@ -1,0 +1,4 @@
+algorithm,profiles,runs,valid_runs,mean_rpd_percent_against_best_of_three,best_hits_including_ties,exclusive_seed_wins
+ILS (N=40),28,280,280,0.034374744227708705,260,202
+VNS adaptado,28,280,280,0.6368492721094129,78,20
+SA-PD (reimplementacao),28,280,280,11.911452954416204,0,0

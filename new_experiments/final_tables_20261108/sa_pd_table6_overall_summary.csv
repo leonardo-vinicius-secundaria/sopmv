@@ -1,0 +1,2 @@
+experiment,profiles,runs_per_profile,total_runs_per_algorithm,time_rule,sa_pd_valid_runs,ils_mean_rpd_percent,vns_mean_rpd_percent,sa_pd_mean_rpd_percent,ils_best_hits_among_three,vns_best_hits_among_three,sa_pd_best_hits_among_three,exclusive_ils_seed_wins,exclusive_vns_seed_wins,exclusive_sa_pd_seed_wins,seed_ties_for_best
+SA-PD Tabela 6 / SOP grande T100,28,10,280,1.5 x Nsets seconds,280,0.034374744227708705,0.6368492721094129,11.911452954416204,260,78,0,202,20,0,58
