@@ -1,0 +1,4 @@
+instances=22
+runs_ils_vns=10
+cplex_limit_seconds=600
+ils_vns_limit=ceil(1.5*Nsets)

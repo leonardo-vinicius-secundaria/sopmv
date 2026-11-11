@@ -1,0 +1,2 @@
+instance,variant,mandatory_ratio,mandatory_sets,status,solver_status,objective,best_bound,gap,elapsed_seconds,tree_nodes,total_distance,tmax,route,visited_nodes,served_sets,mandatory_satisfied,solution_valid,validation_message
+"11eil51_T40_p1_MV20",SOPMV,0.181818181818182,"3;8",Optimal,"BRANCH_AND_CUT; Optimal (CPLEX code 1)",13,13,0,1.29057097434998,1233,68,69,"1;27;14;24;1","1;14;24;27","3;5;8",true,true,"solucao valida"

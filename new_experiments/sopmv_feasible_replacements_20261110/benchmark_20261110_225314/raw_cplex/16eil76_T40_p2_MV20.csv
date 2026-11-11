@@ -1,0 +1,2 @@
+instance,variant,mandatory_ratio,mandatory_sets,status,solver_status,objective,best_bound,gap,elapsed_seconds,tree_nodes,total_distance,tmax,route,visited_nodes,served_sets,mandatory_satisfied,solution_valid,validation_message
+"16eil76_T40_p2_MV20",SOPMV,0.1875,"5;9;10",FeasibleTimeLimit,"BRANCH_AND_CUT; Feasible (CPLEX code 11)",1632,2608.38235294118,0.598273500576664,600.026600122452,307738,81,83,"1;62;74;52;34;1","1;34;52;62;74","5;8;9;10",true,true,"solucao valida"
