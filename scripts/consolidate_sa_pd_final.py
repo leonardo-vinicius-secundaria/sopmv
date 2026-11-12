@@ -111,6 +111,31 @@ def main() -> None:
     detail_fields = list(paired[0])
     write_csv(TABLE_DIR / "sa_pd_table6_paired_seed_results.csv", detail_fields, paired)
 
+    # Versao tabular, com nomes autoexplicativos, para consulta e importacao no
+    # TCC.  Cada linha representa uma mesma instancia/semente nos tres metodos.
+    readable_rows = []
+    for row in paired:
+        readable_rows.append({
+            "instancia": row["instance"],
+            "familia": row["family"],
+            "perfil_lucro": row["profit_profile"],
+            "semente": row["seed"],
+            "conjuntos_sem_deposito": row["sets_without_depot"],
+            "limite_tempo_s": row["time_limit_seconds"],
+            "objetivo_ils": row["ils_objective"],
+            "objetivo_vns": row["vns_objective"],
+            "objetivo_sa_pd": row["sa_pd_objective"],
+            "melhor_objetivo_tres": row["best_objective_among_three"],
+            "rpd_ils_percentual": row["ils_rpd_percent"],
+            "rpd_vns_percentual": row["vns_rpd_percent"],
+            "rpd_sa_pd_percentual": row["sa_pd_rpd_percent"],
+            "distancia_sa_pd": row["sa_pd_distance"],
+            "tempo_sa_pd_s": row["sa_pd_elapsed_seconds"],
+            "solucao_sa_pd_valida": row["sa_pd_valid"],
+        })
+    write_csv(TABLE_DIR / "resultados_sa_pd_sop_grande_t100.csv",
+              list(readable_rows[0]), readable_rows)
+
     summary = []
     total_wins = {"ILS": 0, "VNS": 0, "SA_PD": 0, "TIE": 0}
     for instance, rows in sorted(groups.items()):

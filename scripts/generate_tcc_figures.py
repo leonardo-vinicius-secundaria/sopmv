@@ -14,6 +14,7 @@ from matplotlib.patches import Patch
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "new_experiments/final_tables_20261108/paired_seed_results.csv"
+SA_PD_SOURCE = ROOT / "new_experiments/final_tables_20261108/sa_pd_table6_paired_seed_results.csv"
 OUT = ROOT / "new_experiments/final_tables_20261108/figures"
 
 COLORS = {"ILS_WIN": "#287D3C", "TIE": "#B0B7C3", "VNS_WIN": "#BE3F3F"}
@@ -115,6 +116,36 @@ def main() -> None:
               loc="upper right", frameon=False)
     fig.tight_layout()
     save(fig, "rpd_boxplots_large_instances")
+
+    # Figura 3: comparacao direta e pareada dos tres metodos no mesmo lote
+    # SOP grande T100.  O RPD usa o melhor objetivo entre ILS, VNS e SA-PD
+    # para cada instancia/semente; valores menores sao melhores.
+    with SA_PD_SOURCE.open(newline="", encoding="utf-8") as handle:
+        three_way_rows = list(csv.DictReader(handle))
+    methods = [
+        ("ILS", "ils_rpd_percent", "#287D3C"),
+        ("VNS adaptado", "vns_rpd_percent", "#BE3F3F"),
+        ("SA-PD", "sa_pd_rpd_percent", "#396EAA"),
+    ]
+    fig, ax = plt.subplots(figsize=(7.4, 5.3))
+    box = ax.boxplot(
+        [[float(row[column]) for row in three_way_rows] for _, column, _ in methods],
+        widths=0.58, patch_artist=True, showfliers=True,
+        medianprops={"color": "black", "linewidth": 1.3},
+        whiskerprops={"color": "#555555"}, capprops={"color": "#555555"},
+        flierprops={"marker": "o", "markersize": 2.5, "markerfacecolor": "#555555", "alpha": 0.45},
+    )
+    for patch, (_, _, color) in zip(box["boxes"], methods):
+        patch.set_facecolor(color)
+        patch.set_alpha(0.78)
+    ax.set_xticklabels([name for name, _, _ in methods])
+    ax.set_ylabel("RPD em rela\u00e7\u00e3o ao melhor valor entre os tr\u00eas (\%)")
+    ax.set_title("SOP grande ($T100$): distribui\u00e7\u00e3o por 280 execu\u00e7\u00f5es pareadas")
+    ax.set_ylim(bottom=-0.03)
+    ax.grid(axis="y", alpha=0.25)
+    ax.set_axisbelow(True)
+    fig.tight_layout()
+    save(fig, "rpd_boxplot_ils_vns_sa_pd_sop_grande_t100")
 
     print(f"Figuras geradas em: {OUT}")
 
