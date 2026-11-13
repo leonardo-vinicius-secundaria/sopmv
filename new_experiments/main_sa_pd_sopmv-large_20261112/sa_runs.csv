@@ -1,0 +1,2 @@
+instance,seed,sets_without_depot,time_limit_seconds,status,objective,elapsed_seconds,distance,solution_valid,validation_message,raw_csv
+"80rd400_T100_p1_MV10",202601,80,120,Feasible,318,120.000010961,6331,true,"solucao valida",new_experiments/main_sa_pd_sopmv-large_20261112/raw_sa/80rd400_T100_p1_MV10_seed202601.csv

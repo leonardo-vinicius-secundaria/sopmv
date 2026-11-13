@@ -1,0 +1,11 @@
+stage=sopmv-large-T100
+algorithm=SA_PD
+counterpart=ILS_N40
+sources=/home/leo/tcc_sopmv/new_experiments/main_ils_vns_sopmv-large-pilot_20261102_185511 /home/leo/tcc_sopmv/new_experiments/main_ils_vns_sopmv-large-batch1_20261103_101952 /home/leo/tcc_sopmv/new_experiments/main_ils_vns_sopmv-large-batch2_20261104_091900 /home/leo/tcc_sopmv/new_experiments/main_ils_vns_sopmv-large-batch3_20261105_080555 /home/leo/tcc_sopmv/new_experiments/main_ils_vns_sopmv-large-batch4_20261105_203932 /home/leo/tcc_sopmv/new_experiments/main_ils_vns_sopmv-large-batch5_20261106_090032 /home/leo/tcc_sopmv/new_experiments/main_ils_vns_sopmv-large-batch6_20261106_213903
+seeds=202601 202602 202603 202604 202605 202606 202607 202608 202609 202610
+time_budget=exactly_the_ILS_selection_time_limit_seconds
+T0=16
+alpha=0.93
+iterations_per_temperature=80000
+execution_mode=smoke
+time_limit_override=5
