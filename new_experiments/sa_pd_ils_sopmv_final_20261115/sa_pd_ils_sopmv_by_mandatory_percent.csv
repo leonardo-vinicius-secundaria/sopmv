@@ -1,0 +1,4 @@
+mandatory_percent,profiles,pairs,ils_seed_wins,seed_ties,sa_pd_seed_wins,ils_mean_rpd_percent,sa_pd_mean_rpd_percent,ils_valid_runs,sa_pd_valid_runs
+10,28,280,278,1,1,6.510925332708285e-05,16.2674332408411,280,280
+20,28,280,278,2,0,0.0,16.004948134112393,280,280
+30,28,280,279,1,0,0.0,16.373022344901212,280,280
