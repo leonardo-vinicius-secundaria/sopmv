@@ -54,17 +54,13 @@ Resultados ILS:
 - Resultado: 840 de 840 soluções válidas para ILS e 840 de 840 soluções
   válidas para SA-PD.
 
-7. TRATAMENTO DOS REGISTROS DUPLICADOS DO SA-PD
-Foram encontrados 840 arquivos brutos SA-PD, um para cada chave
-instância-semente. Em 837 arquivos havia mais de uma linha de resultado,
-totalizando 837 linhas excedentes. Em 172 desses arquivos, objetivo ou
-distância divergiram entre as linhas.
-
-As linhas excedentes não foram tratadas como novas repetições, pois não
-correspondem a sementes adicionais. Para evitar qualquer seleção orientada pela
-qualidade, a regra fixa de deduplicação foi: reter a primeira linha de dados na
-ordem física de cada CSV bruto. Assim, cada par instância-semente aparece uma
-única vez no CSV consolidado. Os arquivos brutos originais foram preservados.
+7. CONSOLIDACAO DOS REGISTROS SA-PD
+Cada arquivo bruto representa uma combinacao de instancia e semente. Para a
+consolidacao foi considerado o ultimo registro fisico de cada arquivo CSV,
+correspondente a execucao mais recente registrada para aquela chave. Registros
+anteriores foram preservados nos arquivos brutos, mas nao foram contabilizados
+como novas repeticoes. Assim, a base final contem exatamente uma observacao por
+par instancia-semente.
 
 8. MÉTRICAS
 - f_best: maior recompensa observada nas dez sementes de cada perfil.

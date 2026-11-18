@@ -1,2 +1,2 @@
 experiment,profiles,runs_per_profile,pairs,ils_seed_wins,seed_ties,sa_pd_seed_wins,ils_mean_rpd_percent,sa_pd_mean_rpd_percent,ils_valid_runs,sa_pd_valid_runs,sa_pd_raw_files,sa_pd_duplicate_files,sa_pd_discarded_duplicate_rows,sa_pd_divergent_duplicate_files,deduplication_rule
-ILS versus SA-PD / SOPMV grande T100,84,10,840,835,4,1,2.170308444236095e-05,16.215134573284903,840,840,840,837,837,172,first physical data row of each raw SA-PD CSV
+ILS versus SA-PD / SOPMV grande T100,84,10,840,835,4,1,2.170308444236095e-05,16.157974274458365,840,840,840,837,837,172,last physical data row of each raw SA-PD CSV

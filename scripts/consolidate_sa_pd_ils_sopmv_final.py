@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Consolida ILS x SA-PD no SOPMV grande T100 usando uma linha por seed."""
+"""Consolida ILS x SA-PD no SOPMV grande T100 usando a última linha por seed."""
 import csv
 import statistics as st
 from collections import defaultdict
@@ -53,14 +53,14 @@ def main():
     for path in sorted((SA_DIR / "raw_sa").glob("*.csv")):
         with path.open(encoding="utf-8", newline="") as f: rows = list(csv.DictReader(f))
         if not rows: raise RuntimeError(f"SA-PD vazio: {path}")
-        first = rows[0]
+        selected = rows[-1]
         seed = int(path.stem.rsplit("_seed", 1)[1])
-        key = first["instance"], seed
+        key = selected["instance"], seed
         if key in sa: raise RuntimeError(f"SA-PD duplicado: {key}")
-        sa[key] = {**first, "seed": seed, "raw_csv": str(path), "raw_rows": len(rows)}
+        sa[key] = {**selected, "seed": seed, "raw_csv": str(path), "raw_rows": len(rows)}
         if len(rows) > 1:
             duplicated += 1; discarded += len(rows) - 1
-            divergent += any((r["objective"], r["total_distance"]) != (first["objective"], first["total_distance"]) for r in rows[1:])
+            divergent += any((r["objective"], r["total_distance"]) != (selected["objective"], selected["total_distance"]) for r in rows[:-1])
     if set(ils) != set(sa): raise RuntimeError(f"Chaves: ILS={len(ils)} SA={len(sa)}")
 
     paired, groups = [], defaultdict(list)
@@ -113,7 +113,7 @@ def main():
         "ils_mean_rpd_percent": avg([r["ils_rpd_percent"] for r in paired]), "sa_pd_mean_rpd_percent": avg([r["sa_pd_rpd_percent"] for r in paired]),
         "ils_valid_runs": sum(r["ils_valid"] for r in paired), "sa_pd_valid_runs": sum(r["sa_pd_valid"] for r in paired),
         "sa_pd_raw_files": len(sa), "sa_pd_duplicate_files": duplicated, "sa_pd_discarded_duplicate_rows": discarded, "sa_pd_divergent_duplicate_files": divergent,
-        "deduplication_rule": "first physical data row of each raw SA-PD CSV",
+        "deduplication_rule": "last physical data row of each raw SA-PD CSV",
     }]
     write_csv(OUT / "sa_pd_ils_sopmv_overall_summary.csv", overall)
 
