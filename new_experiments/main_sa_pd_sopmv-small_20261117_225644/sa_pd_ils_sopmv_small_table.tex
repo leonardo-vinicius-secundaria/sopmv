@@ -1,0 +1,25 @@
+% === APENDICE: ILS versus SA-PD no SOPMV pequeno ===
+\begin{table}[htbp]
+\centering
+\caption{Comparacao de qualidade entre ILS e SA-PD nas instancias SOPMV pequenas.}
+\label{tab:ils-sapd-sopmv-small}
+\begin{tabular}{lrrrrrr}
+\toprule
+Obrigatorios & Perfis & Pares & Vitorias ILS & Empates & Vitorias SA-PD & RPD medio SA-PD (\%) \\
+\midrule
+10\% & 18 & 180 & 6 & 174 & 0 & 0{,}125 \\
+20\% & 13 & 130 & 0 & 130 & 0 & 0{,}000 \\
+30\% & 7  & 70  & 0 & 70  & 0 & 0{,}000 \\
+\midrule
+Total & 38 & 380 & 6 & 374 & 0 & 0{,}059 \\
+\bottomrule
+\end{tabular}
+\begin{minipage}{0.94\linewidth}\footnotesize
+Cada par usa a mesma instancia, semente e limite de tempo para ambos os metodos.
+Foram usadas dez sementes por perfil e todas as 760 solucoes (380 por metodo)
+foram validadas. O RPD e calculado em cada par como
+$100(f_{\mathrm{melhor}}-f_{\mathrm{SA\mbox{-}PD}})/f_{\mathrm{melhor}}$.
+As seis vitorias do ILS ocorreram no perfil \texttt{14st70\_T80\_p2\_MV10};
+nos demais 374 pares houve empate em recompensa.
+\end{minipage}
+\end{table}
